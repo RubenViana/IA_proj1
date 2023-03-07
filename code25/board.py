@@ -18,6 +18,22 @@ class Board:
             for col in range(COLS):
                 self.board[row][col].draw(win)
 
+    def rotate_board(self):
+        rotated_board = [list(row)[::-1] for row in zip(*self.board)]
+
+        for row in range(ROWS):
+            for col in range(COLS):
+                self.board[row][col] = Spot(row, col, rotated_board[row][col].color)
+
+    def set_pieces(self, c1, c2):
+        for row in range(ROWS):
+            for col in range(COLS):
+                if row == 0:
+                    self.pieces[row][col] = Piece(row, col, c2)
+                elif row == ROWS - 1:
+                    self.pieces[row][col] = Piece(row, col, c1)
+
+
     def move(self, piece, row, col):
         self.pieces[piece.row][piece.col], self.pieces[row][col] = self.pieces[row][col], self.pieces[piece.row][piece.col]
         piece.move(row, col)
@@ -52,12 +68,7 @@ class Board:
         for row in range(ROWS):
             self.pieces.append([])
             for col in range(COLS):
-                if row == 0:
-                    self.pieces[row].append(Piece(row, col, WHITE))
-                elif row == ROWS - 1:
-                    self.pieces[row].append(Piece(row, col, BLUE))
-                else:
-                    self.pieces[row].append(0)
+                self.pieces[row].append(0)
         
     def draw(self, win):
         self.draw_squares(win)
