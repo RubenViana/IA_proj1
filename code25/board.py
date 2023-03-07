@@ -38,7 +38,7 @@ class Board:
         self.pieces[piece.row][piece.col], self.pieces[row][col] = self.pieces[row][col], self.pieces[piece.row][piece.col]
         piece.move(row, col)
 
-        if row == ROWS - 1 or row == 0:
+        if (row == ROWS - 1 and piece.color == WHITE) or (row == 0 and piece.color == BLUE):
             piece.make_goal()
             if piece.color == WHITE:
                 self.white_goal += 1
@@ -78,100 +78,27 @@ class Board:
                 if piece != 0:
                     piece.draw(win)
 
-    def remove(self, pieces):
-        for piece in pieces:
-            self.pieces[piece.row][piece.col] = 0
-            if piece != 0:
-                if piece.color == BLUE:
-                    self.blue_left -= 1
-                else:
-                    self.white_left -= 1
+    def remove(self, piece):
+        if self.pieces[piece.row][piece.col].color == BLUE: 
+            self.blue_left -= 1
+        else:
+            self.white_left -= 1
+            
+        self.pieces[piece.row][piece.col] = 0
     
+    
+    #o que deve acontecer se, por ex., o branco tiver uma peça goal mas todas as suas restantes peças forem comidas, mas sem o blue 
+    # ter uma única peça goal? Ganha o branco por ter todas as suas peças como goal ou ganha o blue por ter comido todas as peças do branco?
     def winner(self):
-        if self.blue_left <= 0:
+        if self.white_goal > self.blue_goal and self.white_left == self.white_goal:
             return WHITE
-        elif self.white_left <= 0:
+        elif self.blue_left <= 0:
+            return WHITE
+        
+        if self.blue_goal > self.white_goal and self.blue_left == self.blue_goal:
+            return BLUE
+        elif self.white_left <= 0: 
             return BLUE
         
-        return None 
+        return None
     
-    def get_valid_moves(self, piece):
-        moves = {}
-        left = piece.col - 1
-        right = piece.col + 1
-        row = piece.row
-
-        if piece.color == BLUE:
-            moves.update(self._traverse_left(row -1, max(row-3, -1), -1, piece.color, left))
-            moves.update(self._traverse_right(row -1, max(row-3, -1), -1, piece.color, right))
-        if piece.color == WHITE:
-            moves.update(self._traverse_left(row +1, min(row+3, ROWS), 1, piece.color, left))
-            moves.update(self._traverse_right(row +1, min(row+3, ROWS), 1, piece.color, right))
-    
-        return moves
-
-    def _traverse_left(self, start, stop, step, color, left, skipped=[]):
-        moves = {}
-        last = []
-        for r in range(start, stop, step):
-            if left < 0:
-                break
-            
-            current = self.pieces[r][left]
-            if current == 0:
-                if skipped and not last:
-                    break
-                elif skipped:
-                    moves[(r, left)] = last + skipped
-                else:
-                    moves[(r, left)] = last
-                
-                if last:
-                    if step == -1:
-                        row = max(r-3, 0)
-                    else:
-                        row = min(r+3, ROWS)
-                    moves.update(self._traverse_left(r+step, row, step, color, left-1,skipped=last))
-                    moves.update(self._traverse_right(r+step, row, step, color, left+1,skipped=last))
-                break
-            elif current.color == color:
-                break
-            else:
-                last = [current]
-
-            left -= 1
-        
-        return moves
-
-    def _traverse_right(self, start, stop, step, color, right, skipped=[]):
-        moves = {}
-        last = []
-        for r in range(start, stop, step):
-            if right >= COLS:
-                break
-            
-            current = self.pieces[r][right]
-            if current == 0:
-                if skipped and not last:
-                    break
-                elif skipped:
-                    moves[(r,right)] = last + skipped
-                else:
-                    moves[(r, right)] = last
-                
-                if last:
-                    if step == -1:
-                        row = max(r-3, 0)
-                    else:
-                        row = min(r+3, ROWS)
-                    moves.update(self._traverse_left(r+step, row, step, color, right-1,skipped=last))
-                    moves.update(self._traverse_right(r+step, row, step, color, right+1,skipped=last))
-                break
-            elif current.color == color:
-                break
-            else:
-                last = [current]
-
-            right += 1
-        
-        return moves

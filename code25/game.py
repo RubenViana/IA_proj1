@@ -13,7 +13,6 @@ class Game:
     def __init__(self, win):
         self._init()
         self.win = win
-        self.logs = []
     
     def update(self, FONT):
         self.board.draw(self.win)
@@ -21,19 +20,26 @@ class Game:
 
         p1_text = FONT.render("PLAYER 1", True, WHITE)
         p1_text_rect = p1_text.get_rect()
-        self.win.blit(p1_text, (150, 50))
+        p1_text_rect.center = (OFFSET + (ROWS*SQUARE_SIZE) // 2, 100)
+        self.win.blit(p1_text, p1_text_rect)
         p2_text = FONT.render("PLAYER 2", True, WHITE)
         p2_text_rect = p2_text.get_rect()
-        self.win.blit(p2_text, (150, 700))
+        p2_text_rect.center = (OFFSET + (ROWS*SQUARE_SIZE) // 2, 700)
+        self.win.blit(p2_text, p2_text_rect)
         
-        if self.turn == WHITE:
-            pygame.draw.polygon(self.win, (255, 191, 0), ((110,50),(125,65),(110,80)))
-        elif self.turn == BLUE:
-            pygame.draw.polygon(self.win, (255, 191, 0), ((110,700),(125,715),(110,730)))
+        if self.game_state == State.PLAY_STATE:
+            if self.turn == self.p1_color:
+                pygame.draw.polygon(self.win, (255, 191, 0), ((110, 80),(125, 95),(110, 110)))
+            elif self.turn == self.p2_color:
+                pygame.draw.polygon(self.win, (255, 191, 0), ((110, 680),(125, 695),(110, 710)))
 
-        pygame.draw.rect(self.win, WHITE, (OFFSET + SQUARE_SIZE*ROWS + OFFSET, OFFSET, 250, ROWS*SQUARE_SIZE))
-        for i in range(len(self.logs)):
-            self.win.blit(FONT.render(self.logs[i], True, BLACK), (OFFSET + SQUARE_SIZE*ROWS + OFFSET, OFFSET + i*50))
+        if self.game_state == State.P2COLORSIDE_STATE:
+            rotate_text = FONT.render("R -> Rotate Board", True, WHITE)
+            self.win.blit(rotate_text, (OFFSET + OFFSET + ROWS*SQUARE_SIZE, 300))
+            w_select_text = FONT.render("W -> White Pieces", True, WHITE)
+            self.win.blit(w_select_text, (OFFSET + OFFSET + ROWS*SQUARE_SIZE, 350))
+            b_select_text = FONT.render("B -> Blue Pieces", True, WHITE)
+            self.win.blit(b_select_text, (OFFSET + OFFSET + ROWS*SQUARE_SIZE, 400))
 
 
         pygame.display.update()
@@ -43,18 +49,45 @@ class Game:
         self.board = Board()
         self.selected = None
         self.turn = WHITE
-        self.valid_moves = {}
+        self.p1_color = WHITE
+        self.p2_color = BLUE
+        self.valid_moves = set()
+        self.logs = []
 
-    def set_turn(self, turn):
-        self.turn = turn
+    def set_turn(self, color):
+        self.p1_color = color
+        if color == WHITE:
+            self.p2_color = BLUE
+        else:
+            self.p2_color = WHITE
+
+        self.turn = self.p1_color
 
     def winner(self):
         if self.board.winner() != None:
-            self.game_state = State.MENU_STATE
+            self.reset()
             return self.board.winner()
 
     def reset(self):
         self._init()
+
+    def get_valid_moves(self, piece):
+        possible_moves = set()
+        valid_moves = set()
+        left = piece.col - 1
+        right = piece.col + 1
+        up = piece.row - 1
+        down = piece.row + 1
+
+        possible_moves.update({(piece.row, left), (piece.row, right), (up, piece.col), (down, piece.col), (up, left), (up, right), (down, left), (down, right)})
+
+        for move in possible_moves:
+            row, col = move
+            if((0 <= row < ROWS) and (0 <= col < ROWS)):
+                if self.board.get_piece(row, col) == 0 or (self.board.get_piece(row, col).color != self.turn and self.board.get_piece(row, col).goal == False):
+                    valid_moves.add(move)
+       
+        return valid_moves
 
     def select(self, row, col):
         if self.selected:
@@ -64,20 +97,19 @@ class Game:
                 self.select(row, col)
         
         piece = self.board.get_piece(row, col)
-        if piece != 0 and piece.color == self.turn:
+        if piece != 0 and piece.color == self.turn and piece.goal == False:
             self.selected = piece
-            self.valid_moves = self.board.get_valid_moves(piece)
+            self.valid_moves = self.get_valid_moves(piece)
             return True
             
         return False
 
     def _move(self, row, col):
         piece = self.board.get_piece(row, col)
-        if self.selected and piece == 0 and (row, col) in self.valid_moves:
+        if self.selected and (row, col) in self.valid_moves and piece != 0 and piece.color != self.turn:
+            self.board.remove(piece)
+        if self.selected and (row, col) in self.valid_moves:
             self.board.move(self.selected, row, col)
-            skipped = self.valid_moves[(row, col)]
-            if skipped:
-                self.board.remove(skipped)
             self.change_turn()
         else:
             return False

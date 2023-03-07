@@ -52,7 +52,7 @@ def main():
 
         if game.winner() != None:
             print(game.winner())
-            run = False
+            game.game_state = State.MENU_STATE
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -69,7 +69,7 @@ def main():
                     game.board.rotate_board()
                 elif event.key == pygame.K_w:
                     game.board.set_pieces(WHITE, BLUE)
-                    game.set_turn(WHITE)
+                    game.set_turn(BLUE)
                 elif event.key == pygame.K_b:
                     game.board.set_pieces(BLUE, WHITE)
                     game.set_turn(WHITE)
