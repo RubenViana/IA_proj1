@@ -13,33 +13,38 @@ class Game:
     def __init__(self, win):
         self._init()
         self.win = win
+        self.font = pygame.font.SysFont("arial", 30, bold=True)
+        self.btn_font = pygame.font.SysFont("arial", 20, bold=True)
     
-    def update(self, FONT):
+    def update(self):
         self.board.draw(self.win)
         self.draw_valid_moves(self.valid_moves)
 
-        p1_text = FONT.render("PLAYER 1", True, WHITE)
+        esc_text = self.btn_font.render("[ESC] Back", True, BLACK)
+        self.win.blit(esc_text, (10, 10))
+
+        p1_text = self.font.render("PLAYER 1", True, BLACK)
         p1_text_rect = p1_text.get_rect()
-        p1_text_rect.center = (OFFSET + (ROWS*SQUARE_SIZE) // 2, 100)
+        p1_text_rect.center = (OFFSET + (ROWS*SQUARE_SIZE) // 2, OFFSET - 50)
         self.win.blit(p1_text, p1_text_rect)
-        p2_text = FONT.render("PLAYER 2", True, WHITE)
+        p2_text = self.font.render("PLAYER 2", True, BLACK)
         p2_text_rect = p2_text.get_rect()
-        p2_text_rect.center = (OFFSET + (ROWS*SQUARE_SIZE) // 2, 700)
+        p2_text_rect.center = (OFFSET + (ROWS*SQUARE_SIZE) // 2, OFFSET + (ROWS*SQUARE_SIZE) + 50)
         self.win.blit(p2_text, p2_text_rect)
         
         if self.game_state == State.PLAY_STATE:
             if self.turn == self.p1_color:
-                pygame.draw.polygon(self.win, (255, 191, 0), ((110, 80),(125, 95),(110, 110)))
+                pygame.draw.polygon(self.win, (255,215,0), ((110, 80),(125, 95),(110, 110)))
             elif self.turn == self.p2_color:
-                pygame.draw.polygon(self.win, (255, 191, 0), ((110, 680),(125, 695),(110, 710)))
+                pygame.draw.polygon(self.win, (255,215,0), ((110, 680),(125, 695),(110, 710)))
 
         if self.game_state == State.P2COLORSIDE_STATE:
-            rotate_text = FONT.render("R -> Rotate Board", True, WHITE)
-            self.win.blit(rotate_text, (OFFSET + OFFSET + ROWS*SQUARE_SIZE, 300))
-            w_select_text = FONT.render("W -> White Pieces", True, WHITE)
-            self.win.blit(w_select_text, (OFFSET + OFFSET + ROWS*SQUARE_SIZE, 350))
-            b_select_text = FONT.render("B -> Blue Pieces", True, WHITE)
-            self.win.blit(b_select_text, (OFFSET + OFFSET + ROWS*SQUARE_SIZE, 400))
+            rotate_text = self.btn_font.render("[R] Rotate", True, BLACK)
+            self.win.blit(rotate_text, (OFFSET + ROWS*SQUARE_SIZE // 2 - 240, OFFSET + (ROWS*SQUARE_SIZE) + 90))
+            s_select_text = self.btn_font.render("[S] Switch Color", True, BLACK)
+            self.win.blit(s_select_text, (OFFSET + ROWS*SQUARE_SIZE // 2 - 115, OFFSET + (ROWS*SQUARE_SIZE) + 90))
+            sp_select_text = self.btn_font.render("[Space] Start Game", True, BLACK)
+            self.win.blit(sp_select_text, (OFFSET + ROWS*SQUARE_SIZE // 2 + 60, OFFSET + (ROWS*SQUARE_SIZE) + 90))
 
 
         pygame.display.update()
@@ -51,6 +56,7 @@ class Game:
         self.turn = WHITE
         self.p1_color = WHITE
         self.p2_color = BLUE
+        self.board.set_pieces(WHITE, BLUE)
         self.valid_moves = set()
         self.logs = []
 
@@ -60,7 +66,7 @@ class Game:
             self.p2_color = BLUE
         else:
             self.p2_color = WHITE
-
+        self.board.set_pieces(self.p1_color, self.p2_color)
         self.turn = self.p1_color
 
     def winner(self):
@@ -119,7 +125,7 @@ class Game:
     def draw_valid_moves(self, moves):
         for move in moves:
             row, col = move
-            pygame.draw.circle(self.win, GREY, (col * SQUARE_SIZE + SQUARE_SIZE//2 + OFFSET, row * SQUARE_SIZE + SQUARE_SIZE//2 + OFFSET), 15)
+            pygame.draw.circle(self.win, GREY, (col * SQUARE_SIZE + SQUARE_SIZE//2 + OFFSET, row * SQUARE_SIZE + SQUARE_SIZE//2 + OFFSET), SQUARE_SIZE//8)
 
     def change_turn(self):
         self.valid_moves = {}

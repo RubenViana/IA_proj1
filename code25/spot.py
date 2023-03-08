@@ -1,4 +1,4 @@
-from .constants import RED, WHITE, SQUARE_SIZE, GREY, CROWN, BLACK, OFFSET
+from .constants import RED, WHITE, SQUARE_SIZE, BLACK, OFFSET, WOOD
 import pygame
 
 class Spot:
@@ -11,8 +11,8 @@ class Spot:
         self.calc_pos() 
 	
     def draw(self, win):
-        pygame.draw.rect(win, self.color, (self.x, self.y, SQUARE_SIZE, SQUARE_SIZE))
-        pygame.draw.rect(win, BLACK, (self.x, self.y, SQUARE_SIZE, SQUARE_SIZE), 1)
+        pygame.draw.rect(win, self.color, (self.x, self.y, SQUARE_SIZE, SQUARE_SIZE), 0, 10)
+        pygame.draw.rect(win, WOOD, (self.x, self.y, SQUARE_SIZE, SQUARE_SIZE), 1, 10)
         
 
     def calc_pos(self):

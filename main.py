@@ -10,7 +10,7 @@ WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Code25')
 
 # Set up the font
-FONT = pygame.font.Font(None, 50)
+FONT = pygame.font.SysFont("Arial", 40, bold=True)
 
 def get_row_col_from_mouse(pos):
     x, y = pos
@@ -20,12 +20,12 @@ def get_row_col_from_mouse(pos):
 
 def draw_menu(selected_item, menu_items):
         # Draw the background
-        WIN.fill(WHITE)
+        WIN.fill((215, 171, 170))
 
         # Draw the menu items
         for i, item in enumerate(menu_items):
             if i == selected_item:
-                text = FONT.render(item["text"], True, RED)
+                text = FONT.render(item["text"], True, (255,215,0))
             else:
                 text = FONT.render(item["text"], True, BLACK)
             text_rect = text.get_rect()
@@ -63,19 +63,21 @@ def main():
                 row, col = get_row_col_from_mouse(pos)
                 if row < ROWS and row >= 0 and col < ROWS and col >= 0:
                     game.select(row, col)
-
+            elif event.type == pygame.KEYDOWN and game.game_state == State.PLAY_STATE:
+                if event.key == pygame.K_ESCAPE:
+                    game.reset()
             elif event.type == pygame.KEYDOWN and game.game_state == State.P2COLORSIDE_STATE:
                 if event.key == pygame.K_r:
                     game.board.rotate_board()
-                elif event.key == pygame.K_w:
-                    game.board.set_pieces(WHITE, BLUE)
-                    game.set_turn(BLUE)
-                elif event.key == pygame.K_b:
-                    game.board.set_pieces(BLUE, WHITE)
-                    game.set_turn(WHITE)
-                elif event.key == pygame.K_RETURN:
+                elif event.key == pygame.K_s:
+                    if game.turn == WHITE:
+                        game.set_turn(BLUE)
+                    else:
+                        game.set_turn(WHITE)
+                elif event.key == pygame.K_SPACE:
                     game.game_state = State.PLAY_STATE
-
+                elif event.key == pygame.K_ESCAPE:
+                    game.reset()
             elif event.type == pygame.KEYDOWN and game.game_state == State.MENU_STATE:
                 if event.key == pygame.K_UP:
                     selected_item = (selected_item - 1) % len(menu_items)
@@ -92,7 +94,7 @@ def main():
         if game.game_state == State.MENU_STATE:
             draw_menu(selected_item, menu_items)
         elif game.game_state == State.PLAY_STATE or game.game_state == State.P2COLORSIDE_STATE:
-            game.update(FONT)
+            game.update()
     
     pygame.quit()
 

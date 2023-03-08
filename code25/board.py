@@ -1,6 +1,6 @@
 import pygame
 import random
-from .constants import BLACK, ROWS, BLUE, SQUARE_SIZE, COLS, WHITE, BLUE_WHITE
+from .constants import BLACK, ROWS, BLUE, COLS, WHITE, BLUE_WHITE, WOOD, OFFSET, SQUARE_SIZE
 from .piece import Piece
 from .spot import Spot
 
@@ -13,7 +13,6 @@ class Board:
         self.create_board()
     
     def draw_squares(self, win):
-        win.fill(BLACK)
         for row in range(ROWS):
             for col in range(COLS):
                 self.board[row][col].draw(win)
@@ -29,9 +28,9 @@ class Board:
         for row in range(ROWS):
             for col in range(COLS):
                 if row == 0:
-                    self.pieces[row][col] = Piece(row, col, c2)
-                elif row == ROWS - 1:
                     self.pieces[row][col] = Piece(row, col, c1)
+                elif row == ROWS - 1:
+                    self.pieces[row][col] = Piece(row, col, c2)
 
 
     def move(self, piece, row, col):
@@ -71,6 +70,9 @@ class Board:
                 self.pieces[row].append(0)
         
     def draw(self, win):
+        win.fill((215, 171, 170))
+        pygame.draw.rect(win, WOOD, (OFFSET - 20, OFFSET - 20, SQUARE_SIZE*ROWS + 40, SQUARE_SIZE*ROWS + 40), 0, 5)
+        pygame.draw.rect(win, (92, 64, 51), (OFFSET - 20, OFFSET - 20, SQUARE_SIZE*ROWS + 40, SQUARE_SIZE*ROWS + 40), 5, 5)
         self.draw_squares(win)
         for row in range(ROWS):
             for col in range(COLS):
