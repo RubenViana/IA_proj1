@@ -71,7 +71,7 @@ class Game:
 
     def winner(self):
         if self.board.winner() != None:
-            self.reset()
+            #self.reset()
             return self.board.winner()
 
     def reset(self):
@@ -115,12 +115,23 @@ class Game:
         if self.selected and (row, col) in self.valid_moves and piece != 0 and piece.color != self.turn:
             self.board.remove(piece)
         if self.selected and (row, col) in self.valid_moves:
-            self.board.move(self.selected, row, col)
+            self.move(self.selected, row, col)
             self.change_turn()
         else:
             return False
 
         return True
+    
+    def move(self, piece, row, col):
+        self.board.pieces[piece.row][piece.col], self.board.pieces[row][col] = self.board.pieces[row][col], self.board.pieces[piece.row][piece.col]
+        piece.move(row, col)
+
+        if (row == ROWS - 1 and piece.color == WHITE and self.p1_color == WHITE) or (row == 0 and piece.color == WHITE and self.p1_color == BLUE) or (row == 0 and piece.color == BLUE and self.p1_color == WHITE) or (row == ROWS - 1 and piece.color == BLUE and self.p1_color == BLUE):
+            piece.make_goal()
+            if piece.color == WHITE:
+                self.board.white_goal += 1
+            else:
+                self.board.blue_goal += 1 
 
     def draw_valid_moves(self, moves):
         for move in moves:
