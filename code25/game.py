@@ -150,14 +150,10 @@ class Game:
             row, col = move
             if((0 <= row < ROWS) and (0 <= col < ROWS)):
                 if self.board.get_piece(row, col) == 0 or (self.board.get_piece(row, col).color != self.turn and self.board.get_piece(row, col).goal == False):
-                    if (self.color_changes(piece, row, col) < 2):
+                    if self.color_changes(piece, row, col) < 2 and not(self.stop_movement(piece, row, col)):
+                        print(move)
                         valid_moves.add(move)
-        
-        for move in valid_moves.copy():
-            row, col = move
-            if (self.stop_movement(piece, row, col)):
-                valid_moves.remove(move)
-        
+                            
         return valid_moves
 
     def select(self, row, col):
