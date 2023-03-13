@@ -1,5 +1,5 @@
 import pygame
-from .constants import BLUE_WHITE, WHITE, BLUE, SQUARE_SIZE, GREY, OFFSET, WIDTH, BLACK, ROWS
+from .constants import BLUE_WHITE, WHITE, BLUE, SQUARE_SIZE, GREY, OFFSET, WIDTH, BLACK, ROWS, BTN, BTN_HOVER, BACKGROUND
 from code25.board import Board
 from enum import Enum
 
@@ -7,30 +7,106 @@ class State(Enum):
     MENU_STATE = 0
     PLAY_STATE = 1
     P2COLORSIDE_STATE = 2
+    PLAY_MENU_STATE = 3
 
 
 class Game:
     def __init__(self, win):
         self._init()
         self.win = win
-        self.font = pygame.font.SysFont("arial", 30, bold=True)
+        self.font = pygame.font.SysFont("arial", 35, bold=True)
+        self.font_mm = pygame.font.SysFont("arial", 40, bold=True)
+        self.font_opt = pygame.font.SysFont("arial", 30, bold=False)
         self.btn_font = pygame.font.SysFont("arial", 20, bold=True)
+        self.main_menu_items = [
+                {"text": "Play", "position": (WIDTH // 2, 400)},
+                {"text": "Rules", "position": (WIDTH // 2, 500)},
+                {"text": "Quit", "position": (WIDTH // 2, 600)}
+            ]
+        self.player_menu_opts = [
+                {"text": "Player1", "type": ["Human", "Machine"], "pos1": (WIDTH // 3 + 20, 280), "pos2": (WIDTH*2 // 3 - 20, 280)},
+                {"text": "Difficulty1", "type": ["Easy", "Medium", "Hard"], "pos1": (WIDTH // 3 + 20, 350), "pos2": (WIDTH*2 // 3 - 20, 350)},
+                {"text": "Player2", "type": ["Human", "Machine"], "pos1": (WIDTH // 3 + 20, 480), "pos2": (WIDTH*2 // 3 - 20, 480)},
+                {"text": "Difficulty2", "type": ["Easy", "Medium", "Hard"], "pos1": (WIDTH // 3 + 20, 550), "pos2": (WIDTH*2 // 3 - 20, 550)},
+                {"text": "START", "pos1": (WIDTH // 2, 670)}
+            ]
     
     def update(self):
-        self.board.draw(self.win)
-        self.draw_valid_moves(self.valid_moves)
+        if self.game_state == State.PLAY_MENU_STATE:
+            self.win.fill(BACKGROUND)
+            esc_text = self.btn_font.render("[ESC] Back", True, BTN)
+            self.win.blit(esc_text, (10, 10))
 
-        esc_text = self.btn_font.render("[ESC] Back", True, BLACK)
-        self.win.blit(esc_text, (10, 10))
+            for i, item in enumerate(self.player_menu_opts):
+                if i == self.selected_player_menu_opts:
+                    if i == 4:
+                        text = self.font.render(item["text"], True, BTN_HOVER)
+                    else:
+                        text = self.font.render(item["text"], True, BTN_HOVER)
+                        texto = self.font.render("<", True, BTN_HOVER)
+                        texto_rect = texto.get_rect()
+                        texto_rect.center = (item["pos2"][0] - 70, item["pos2"][1])
+                        self.win.blit(texto, texto_rect)
+                        texto = self.font.render(">", True, BTN_HOVER)
+                        texto_rect = texto.get_rect()
+                        texto_rect.center = (item["pos2"][0] + 70, item["pos2"][1])
+                        self.win.blit(texto, texto_rect)
+                else:
+                    text = self.font.render(item["text"], True, BTN)
+                text_rect = text.get_rect()
+                text_rect.center = item["pos1"]
+                self.win.blit(text, text_rect)
 
-        p1_text = self.font.render("PLAYER 1", True, BLACK)
-        p1_text_rect = p1_text.get_rect()
-        p1_text_rect.center = (OFFSET + (ROWS*SQUARE_SIZE) // 2, OFFSET - 50)
-        self.win.blit(p1_text, p1_text_rect)
-        p2_text = self.font.render("PLAYER 2", True, BLACK)
-        p2_text_rect = p2_text.get_rect()
-        p2_text_rect.center = (OFFSET + (ROWS*SQUARE_SIZE) // 2, OFFSET + (ROWS*SQUARE_SIZE) + 50)
-        self.win.blit(p2_text, p2_text_rect)
+                if item["text"] == "Player1":
+                    texto = self.font_opt.render(item["type"][self.selected_player1_menu_type], True, BTN)
+                    texto_rect = texto.get_rect()
+                    texto_rect.center = item["pos2"]
+                    self.win.blit(texto, texto_rect)
+                elif item["text"] == "Difficulty1":
+                    texto = self.font_opt.render(item["type"][self.selected_player1_menu_diff], True, BTN)
+                    texto_rect = texto.get_rect()
+                    texto_rect.center = item["pos2"]
+                    self.win.blit(texto, texto_rect)
+                elif item["text"] == "Player2":
+                    texto = self.font_opt.render(item["type"][self.selected_player2_menu_type], True, BTN)
+                    texto_rect = texto.get_rect()
+                    texto_rect.center = item["pos2"]
+                    self.win.blit(texto, texto_rect)
+                elif item["text"] == "Difficulty2":
+                    texto = self.font_opt.render(item["type"][self.selected_player2_menu_diff], True, BTN)
+                    texto_rect = texto.get_rect()
+                    texto_rect.center = item["pos2"]
+                    self.win.blit(texto, texto_rect)
+
+        if self.game_state == State.MENU_STATE:
+            # Draw the background
+            self.win.fill(BACKGROUND)
+
+            # Draw the menu items
+            for i, item in enumerate(self.main_menu_items):
+                if i == self.selected_main_menu_item:
+                    text = self.font_mm.render(item["text"], True, BTN_HOVER)
+                else:
+                    text = self.font_mm.render(item["text"], True, BTN)
+                text_rect = text.get_rect()
+                text_rect.center = item["position"]
+                self.win.blit(text, text_rect)
+            
+        if self.game_state == State.PLAY_STATE or self.game_state == State.P2COLORSIDE_STATE:
+            self.board.draw(self.win)
+            self.draw_valid_moves(self.valid_moves)
+
+            esc_text = self.btn_font.render("[ESC] Back", True, BTN)
+            self.win.blit(esc_text, (10, 10))
+
+            p1_text = self.font.render("PLAYER 1", True, BLACK)
+            p1_text_rect = p1_text.get_rect()
+            p1_text_rect.center = (OFFSET + (ROWS*SQUARE_SIZE) // 2, OFFSET - 50)
+            self.win.blit(p1_text, p1_text_rect)
+            p2_text = self.font.render("PLAYER 2", True, BLACK)
+            p2_text_rect = p2_text.get_rect()
+            p2_text_rect.center = (OFFSET + (ROWS*SQUARE_SIZE) // 2, OFFSET + (ROWS*SQUARE_SIZE) + 50)
+            self.win.blit(p2_text, p2_text_rect)
         
         if self.game_state == State.PLAY_STATE:
             if self.turn == self.p1_color:
@@ -39,11 +115,11 @@ class Game:
                 pygame.draw.polygon(self.win, (255,215,0), ((110, 680),(125, 695),(110, 710)))
 
         if self.game_state == State.P2COLORSIDE_STATE:
-            rotate_text = self.btn_font.render("[R] Rotate", True, BLACK)
+            rotate_text = self.btn_font.render("[R] Rotate", True, BTN)
             self.win.blit(rotate_text, (OFFSET + ROWS*SQUARE_SIZE // 2 - 240, OFFSET + (ROWS*SQUARE_SIZE) + 90))
-            s_select_text = self.btn_font.render("[S] Switch Color", True, BLACK)
+            s_select_text = self.btn_font.render("[S] Switch Color", True, BTN)
             self.win.blit(s_select_text, (OFFSET + ROWS*SQUARE_SIZE // 2 - 115, OFFSET + (ROWS*SQUARE_SIZE) + 90))
-            sp_select_text = self.btn_font.render("[Space] Start Game", True, BLACK)
+            sp_select_text = self.btn_font.render("[Space] Start Game", True, BTN)
             self.win.blit(sp_select_text, (OFFSET + ROWS*SQUARE_SIZE // 2 + 60, OFFSET + (ROWS*SQUARE_SIZE) + 90))
 
 
@@ -58,7 +134,12 @@ class Game:
         self.p2_color = BLUE
         self.board.set_pieces(WHITE, BLUE)
         self.valid_moves = set()
-        self.logs = []
+        self.selected_main_menu_item = 0
+        self.selected_player_menu_opts = 0
+        self.selected_player1_menu_type = 0
+        self.selected_player1_menu_diff = 0
+        self.selected_player2_menu_type = 0
+        self.selected_player2_menu_diff = 0
 
     def set_turn(self, color):
         self.p1_color = color
@@ -71,6 +152,13 @@ class Game:
 
     def winner(self):
         if self.board.winner() != None:
+            pygame.draw.rect(self.win, (10, 10, 10), (50, OFFSET, WIDTH - 100, 100), 0)
+            text = self.font_mm.render(f"{self.board.winner()} WON", True, BTN_HOVER)
+            text_rect = text.get_rect()
+            text_rect.center = (50 + (WIDTH-100) // 2, OFFSET + 50)
+            self.win.blit(text, text_rect)
+            pygame.display.update()
+            pygame.time.wait(2000)
             return self.board.winner()
 
     def reset(self):
@@ -151,7 +239,6 @@ class Game:
             if((0 <= row < ROWS) and (0 <= col < ROWS)):
                 if self.board.get_piece(row, col) == 0 or (self.board.get_piece(row, col).color != self.turn and self.board.get_piece(row, col).goal == False):
                     if self.color_changes(piece, row, col) < 2 and not(self.stop_movement(piece, row, col)):
-                        print(move)
                         valid_moves.add(move)
                             
         return valid_moves
@@ -202,9 +289,7 @@ class Game:
     def change_turn(self):
         self.valid_moves = {}
         if self.turn == BLUE:
-            self.logs.append("White turn")
             self.turn = WHITE
         else:
-            self.logs.append("Blue turn")
             self.turn = BLUE
         

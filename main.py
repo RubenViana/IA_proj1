@@ -18,84 +18,96 @@ def get_row_col_from_mouse(pos):
     col = (x - OFFSET) // SQUARE_SIZE
     return row, col
 
-def draw_menu(selected_item, menu_items):
-        # Draw the background
-        WIN.fill((215, 171, 170))
-
-        # Draw the menu items
-        for i, item in enumerate(menu_items):
-            if i == selected_item:
-                text = FONT.render(item["text"], True, (255,215,0))
-            else:
-                text = FONT.render(item["text"], True, BLACK)
-            text_rect = text.get_rect()
-            text_rect.center = item["position"]
-            WIN.blit(text, text_rect)
-
-        # Update the screen
-        pygame.display.update()
 
 def main():
     run = True
     clock = pygame.time.Clock()
     game = Game(WIN)
 
-    selected_item = 0
-    menu_items = [
-            {"text": "Play", "position": (WIDTH // 2, 400)},
-            {"text": "Rules", "position": (WIDTH // 2, 500)},
-            {"text": "Quit", "position": (WIDTH // 2, 600)}
-        ]
-    
     while run:
         clock.tick(FPS)
 
-        if game.winner() != None:
-            print(game.winner())
-            game.game_state = State.MENU_STATE
-            game.reset()
+        if game.game_state == State.PLAY_STATE:
+            if game.winner() != None:
+                print(game.winner())
+                game.reset()
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-            
-            if event.type == pygame.MOUSEBUTTONDOWN and game.game_state == State.PLAY_STATE:
-                pos = pygame.mouse.get_pos()
-                row, col = get_row_col_from_mouse(pos)
-                if row < ROWS and row >= 0 and col < ROWS and col >= 0:
-                    game.select(row, col)
-            elif event.type == pygame.KEYDOWN and game.game_state == State.PLAY_STATE:
-                if event.key == pygame.K_ESCAPE:
-                    game.reset()
-            elif event.type == pygame.KEYDOWN and game.game_state == State.P2COLORSIDE_STATE:
-                if event.key == pygame.K_r:
-                    game.board.rotate_board()
-                elif event.key == pygame.K_s:
-                    if game.turn == WHITE:
-                        game.set_turn(BLUE)
-                    else:
-                        game.set_turn(WHITE)
-                elif event.key == pygame.K_SPACE:
-                    game.game_state = State.PLAY_STATE
-                elif event.key == pygame.K_ESCAPE:
-                    game.reset()
-            elif event.type == pygame.KEYDOWN and game.game_state == State.MENU_STATE:
-                if event.key == pygame.K_UP:
-                    selected_item = (selected_item - 1) % len(menu_items)
-                elif event.key == pygame.K_DOWN:
-                    selected_item = (selected_item + 1) % len(menu_items)
-                elif event.key == pygame.K_RETURN:
-                    if selected_item == 0:
-                        game.game_state = State.P2COLORSIDE_STATE
-                    elif selected_item == 1:
-                        print("Rules")
-                    elif selected_item == 2:
-                        run = False
-                
-        if game.game_state == State.MENU_STATE:
-            draw_menu(selected_item, menu_items)
-        elif game.game_state == State.PLAY_STATE or game.game_state == State.P2COLORSIDE_STATE:
-            game.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pos = pygame.mouse.get_pos()
+                    row, col = get_row_col_from_mouse(pos)
+                    if row < ROWS and row >= 0 and col < ROWS and col >= 0:
+                        game.select(row, col)
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        game.reset()
+        elif game.game_state == State.P2COLORSIDE_STATE:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r:
+                        game.board.rotate_board()
+                    elif event.key == pygame.K_s:
+                        if game.turn == WHITE:
+                            game.set_turn(BLUE)
+                        else:
+                            game.set_turn(WHITE)
+                    elif event.key == pygame.K_SPACE:
+                        game.game_state = State.PLAY_STATE
+                    elif event.key == pygame.K_ESCAPE:
+                        game.reset()
+        elif game.game_state == State.MENU_STATE:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        game.selected_main_menu_item = (game.selected_main_menu_item - 1) % len(game.main_menu_items)
+                    elif event.key == pygame.K_DOWN:
+                        game.selected_main_menu_item = (game.selected_main_menu_item + 1) % len(game.main_menu_items)
+                    elif event.key == pygame.K_RETURN:
+                        if game.selected_main_menu_item == 0:
+                            game.game_state = State.PLAY_MENU_STATE
+                        elif game.selected_main_menu_item == 1:
+                            print("Rules")
+                        elif game.selected_main_menu_item == 2:
+                            run = False
+        elif game.game_state == State.PLAY_MENU_STATE:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        game.reset()
+                    if event.key == pygame.K_UP:
+                        game.selected_player_menu_opts = (game.selected_player_menu_opts - 1) % len(game.player_menu_opts)
+                    elif event.key == pygame.K_DOWN:
+                        game.selected_player_menu_opts = (game.selected_player_menu_opts + 1) % len(game.player_menu_opts)
+                    elif event.key == pygame.K_LEFT:
+                        if game.selected_player_menu_opts == 0:
+                            game.selected_player1_menu_type = (game.selected_player1_menu_type - 1) % len(game.player_menu_opts[0]["type"])
+                        elif game.selected_player_menu_opts == 1 and game.player_menu_opts[0]["type"][game.selected_player1_menu_type] == "Machine":
+                            game.selected_player1_menu_diff = (game.selected_player1_menu_diff - 1) % len(game.player_menu_opts[1]["type"])
+                        elif game.selected_player_menu_opts == 2:
+                            game.selected_player2_menu_type = (game.selected_player2_menu_type - 1) % len(game.player_menu_opts[2]["type"])
+                        elif game.selected_player_menu_opts == 3 and game.player_menu_opts[2]["type"][game.selected_player2_menu_type] == "Machine":
+                            game.selected_player2_menu_diff = (game.selected_player2_menu_diff - 1) % len(game.player_menu_opts[3]["type"])
+                    elif event.key == pygame.K_RIGHT:
+                        if game.selected_player_menu_opts == 0:
+                            game.selected_player1_menu_type = (game.selected_player1_menu_type + 1) % len(game.player_menu_opts[0]["type"])
+                        elif game.selected_player_menu_opts == 1 and game.player_menu_opts[0]["type"][game.selected_player1_menu_type] == "Machine":
+                            game.selected_player1_menu_diff = (game.selected_player1_menu_diff + 1) % len(game.player_menu_opts[1]["type"])
+                        elif game.selected_player_menu_opts == 2:
+                            game.selected_player2_menu_type = (game.selected_player2_menu_type + 1) % len(game.player_menu_opts[2]["type"])
+                        elif game.selected_player_menu_opts == 3 and game.player_menu_opts[2]["type"][game.selected_player2_menu_type] == "Machine":
+                            game.selected_player2_menu_diff = (game.selected_player2_menu_diff + 1) % len(game.player_menu_opts[3]["type"])
+                    elif event.key == pygame.K_RETURN:
+                        if game.selected_player_menu_opts == 4:
+                            game.game_state = State.P2COLORSIDE_STATE
+        game.update()
     
     pygame.quit()
 
