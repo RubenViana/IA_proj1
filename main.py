@@ -53,6 +53,7 @@ def main():
         if game.winner() != None:
             print(game.winner())
             game.game_state = State.MENU_STATE
+            game.reset()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

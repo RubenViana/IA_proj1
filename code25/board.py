@@ -33,17 +33,6 @@ class Board:
                     self.pieces[row][col] = Piece(row, col, c2)
 
 
-    def move(self, piece, row, col):
-        self.pieces[piece.row][piece.col], self.pieces[row][col] = self.pieces[row][col], self.pieces[piece.row][piece.col]
-        piece.move(row, col)
-
-        if (row == ROWS - 1 and piece.color == WHITE) or (row == 0 and piece.color == BLUE):
-            piece.make_goal()
-            if piece.color == WHITE:
-                self.white_goal += 1
-            else:
-                self.blue_goal += 1 
-
     def get_piece(self, row, col):
         return self.pieces[row][col]
 
@@ -92,14 +81,20 @@ class Board:
     #o que deve acontecer se, por ex., o branco tiver uma peça goal mas todas as suas restantes peças forem comidas, mas sem o blue 
     # ter uma única peça goal? Ganha o branco por ter todas as suas peças como goal ou ganha o blue por ter comido todas as peças do branco?
     def winner(self):
-        if self.white_goal > self.blue_goal and self.white_left == self.white_goal:
+        if self.white_goal > self.blue_goal and (self.white_left == self.white_goal or self.blue_left == self.blue_goal):
             return WHITE
+        elif self.white_goal == self.blue_goal and (self.white_left == self.white_goal or self.blue_left == self.blue_goal):
+            if self.white_left > self.blue_left:
+                return WHITE
         elif self.blue_left <= 0:
             return WHITE
         
-        if self.blue_goal > self.white_goal and self.blue_left == self.blue_goal:
+        if self.blue_goal > self.white_goal and (self.white_left == self.white_goal or self.blue_left == self.blue_goal):
             return BLUE
-        elif self.white_left <= 0: 
+        elif self.blue_goal == self.white_goal and (self.white_left == self.white_goal or self.blue_left == self.blue_goal):
+            if self.blue_left > self.white_left:
+                return BLUE
+        elif self.white_left <= 0:
             return BLUE
         
         return None

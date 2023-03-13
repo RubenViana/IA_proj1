@@ -1,5 +1,5 @@
 import pygame
-from .constants import RED, WHITE, BLUE, SQUARE_SIZE, GREY, OFFSET, WIDTH, BLACK, ROWS
+from .constants import BLUE_WHITE, WHITE, BLUE, SQUARE_SIZE, GREY, OFFSET, WIDTH, BLACK, ROWS
 from code25.board import Board
 from enum import Enum
 
@@ -71,28 +71,89 @@ class Game:
 
     def winner(self):
         if self.board.winner() != None:
-            self.reset()
             return self.board.winner()
 
     def reset(self):
         self._init()
 
+    def get_intermediate_positions(self, start, end):
+
+        intermediate_positions = []
+        
+        dx = end[0] - start[0]
+        dy = end[1] - start[1]
+        
+        x_direction = 1 if dx > 0 else -1
+        y_direction = 1 if dy > 0 else -1
+        
+        abs_dx = abs(dx)
+        abs_dy = abs(dy)
+        
+        max_steps = max(abs_dx, abs_dy)
+        
+        x_step = abs_dx / max_steps if max_steps > 0 else 0
+        y_step = abs_dy / max_steps if max_steps > 0 else 0
+        
+        x = start[0]
+        y = start[1]
+        
+        for i in range(max_steps):
+            intermediate_positions.append((int(round(x)), int(round(y))))
+            x += x_step * x_direction
+            y += y_step * y_direction
+        
+        intermediate_positions.append(end)
+        intermediate_positions.pop(0)
+        
+        return intermediate_positions
+
+    def color_changes(self, piece, row, col):
+        piece.row_ = piece.row
+        piece.col_ = piece.col
+        color_changes = 0
+        intermediate_pos = self.get_intermediate_positions((piece.row, piece.col), (row, col))
+        
+        for int_pos in intermediate_pos:
+            row_int, col_int = int_pos
+            if (piece.color != self.board.board[row_int][col_int].get_color()) or (self.board.board[piece.row_][piece.col_].get_color() != self.board.board[row_int][col_int].get_color()):
+                color_changes += 1
+                piece.row_ = row_int
+                piece.col_ = col_int
+
+        return color_changes
+    
+    def stop_movement(self, piece, row, col):
+        intermediate_pos = self.get_intermediate_positions((piece.row, piece.col), (row, col))
+
+        for int_pos in intermediate_pos:
+            row_int, col_int = int_pos
+            if (self.board.get_piece(row_int, col_int) != 0) and (row_int != row or col_int != col):
+                return True
+
     def get_valid_moves(self, piece):
         possible_moves = set()
         valid_moves = set()
-        left = piece.col - 1
-        right = piece.col + 1
-        up = piece.row - 1
-        down = piece.row + 1
-
-        possible_moves.update({(piece.row, left), (piece.row, right), (up, piece.col), (down, piece.col), (up, left), (up, right), (down, left), (down, right)})
+        left = piece.col
+        right = piece.col
+        up = piece.row
+        down = piece.row
+    	
+        for i in range(0,ROWS-1):
+            left -= 1
+            right += 1
+            up -= 1
+            down += 1
+            possible_moves.update({(piece.row, left), (piece.row, right), (up, piece.col), (down, piece.col), (up, left), (up, right), (down, left), (down, right)})
+        
 
         for move in possible_moves:
             row, col = move
             if((0 <= row < ROWS) and (0 <= col < ROWS)):
                 if self.board.get_piece(row, col) == 0 or (self.board.get_piece(row, col).color != self.turn and self.board.get_piece(row, col).goal == False):
-                    valid_moves.add(move)
-       
+                    if self.color_changes(piece, row, col) < 2 and not(self.stop_movement(piece, row, col)):
+                        print(move)
+                        valid_moves.add(move)
+                            
         return valid_moves
 
     def select(self, row, col):
@@ -115,12 +176,23 @@ class Game:
         if self.selected and (row, col) in self.valid_moves and piece != 0 and piece.color != self.turn:
             self.board.remove(piece)
         if self.selected and (row, col) in self.valid_moves:
-            self.board.move(self.selected, row, col)
+            self.move(self.selected, row, col)
             self.change_turn()
         else:
             return False
 
         return True
+    
+    def move(self, piece, row, col):
+        self.board.pieces[piece.row][piece.col], self.board.pieces[row][col] = self.board.pieces[row][col], self.board.pieces[piece.row][piece.col]
+        piece.move(row, col)
+
+        if (row == ROWS - 1 and piece.color == WHITE and self.p1_color == WHITE) or (row == 0 and piece.color == WHITE and self.p1_color == BLUE) or (row == 0 and piece.color == BLUE and self.p1_color == WHITE) or (row == ROWS - 1 and piece.color == BLUE and self.p1_color == BLUE):
+            piece.make_goal()
+            if piece.color == WHITE:
+                self.board.white_goal += 1
+            else:
+                self.board.blue_goal += 1 
 
     def draw_valid_moves(self, moves):
         for move in moves:
