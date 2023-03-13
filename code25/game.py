@@ -132,6 +132,10 @@ class Game:
         self.turn = WHITE
         self.p1_color = WHITE
         self.p2_color = BLUE
+        self.ai1_color = None
+        self.ai2_color = None
+        self.ai1_diff = None
+        self.ai2_diff = None
         self.board.set_pieces(WHITE, BLUE)
         self.valid_moves = set()
         self.selected_main_menu_item = 0
@@ -147,13 +151,34 @@ class Game:
             self.p2_color = BLUE
         else:
             self.p2_color = WHITE
+
+        if self.ai2_diff != None:
+            self.ai2_color = self.p2_color
+        if self.ai1_diff != None:
+            self.ai1_color = self.p1_color
+
         self.board.set_pieces(self.p1_color, self.p2_color)
+
         self.turn = self.p1_color
+
+    def set_players(self):
+        if self.selected_player1_menu_type != 0:
+            self.ai1_diff = self.selected_player1_menu_diff
+        if self.selected_player2_menu_type != 0:
+            self.ai2_diff = self.selected_player2_menu_diff
+            # choose random color to p2(ai2) and rotate board randomly aswell
+            self.set_turn(BLUE)
+            return State.PLAY_STATE
+        return State.P2COLORSIDE_STATE
 
     def winner(self):
         if self.board.winner() != None:
+            if self.board.winner() == self.p1_color:
+                winner = "PLAYER 1"
+            else:
+                winner = "PLAYER 2"
             pygame.draw.rect(self.win, (10, 10, 10), (50, OFFSET, WIDTH - 100, 100), 0)
-            text = self.font_mm.render(f"{self.board.winner()} WON", True, BTN_HOVER)
+            text = self.font_mm.render(f"{winner} WON", True, BTN_HOVER)
             text_rect = text.get_rect()
             text_rect.center = (50 + (WIDTH-100) // 2, OFFSET + 50)
             self.win.blit(text, text_rect)
@@ -257,6 +282,10 @@ class Game:
             return True
             
         return False
+
+    def _move_ai(self):             # implement from here AI monte carlo and minimax
+        pygame.time.wait(1000)
+        self.change_turn()
 
     def _move(self, row, col):
         piece = self.board.get_piece(row, col)

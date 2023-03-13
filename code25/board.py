@@ -37,7 +37,6 @@ class Board:
         return self.pieces[row][col]
 
     def create_board(self):
-
         for row in range(ROWS):
             self.board.append([])
             for col in range(COLS):

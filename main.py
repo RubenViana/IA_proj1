@@ -31,18 +31,24 @@ def main():
             if game.winner() != None:
                 print(game.winner())
                 game.reset()
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    run = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    pos = pygame.mouse.get_pos()
-                    row, col = get_row_col_from_mouse(pos)
-                    if row < ROWS and row >= 0 and col < ROWS and col >= 0:
-                        game.select(row, col)
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        game.reset()
+            if game.turn == game.ai1_color:
+                # ai_move(turn, game, ai1_diff)  ->  make an ai move
+                game._move_ai()
+            elif game.turn == game.ai2_color:
+                # ai_move(turn, game, ai2_diff)  ->  make an ai move 
+                game._move_ai()
+            else:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        run = False
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        pos = pygame.mouse.get_pos()
+                        row, col = get_row_col_from_mouse(pos)
+                        if row < ROWS and row >= 0 and col < ROWS and col >= 0:
+                            game.select(row, col)
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            game.reset()
         elif game.game_state == State.P2COLORSIDE_STATE:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -56,6 +62,7 @@ def main():
                         else:
                             game.set_turn(WHITE)
                     elif event.key == pygame.K_SPACE:
+                        game.set_turn(game.p1_color)
                         game.game_state = State.PLAY_STATE
                     elif event.key == pygame.K_ESCAPE:
                         game.reset()
@@ -106,7 +113,7 @@ def main():
                             game.selected_player2_menu_diff = (game.selected_player2_menu_diff + 1) % len(game.player_menu_opts[3]["type"])
                     elif event.key == pygame.K_RETURN:
                         if game.selected_player_menu_opts == 4:
-                            game.game_state = State.P2COLORSIDE_STATE
+                            game.game_state = game.set_players()
         game.update()
     
     pygame.quit()
