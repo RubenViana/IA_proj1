@@ -112,14 +112,14 @@ class Game:
         piece.col_ = piece.col
         color_changes = 0
         intermediate_pos = self.get_intermediate_positions((piece.row, piece.col), (row, col))
-        
+        self.board.board[ROWS//2][ROWS//2].set_color(self.turn)
         for int_pos in intermediate_pos:
             row_int, col_int = int_pos
             if (piece.color != self.board.board[row_int][col_int].get_color()) or (self.board.board[piece.row_][piece.col_].get_color() != self.board.board[row_int][col_int].get_color()):
                 color_changes += 1
                 piece.row_ = row_int
                 piece.col_ = col_int
-
+        self.board.board[ROWS//2][ROWS//2].set_color(BLUE_WHITE)
         return color_changes
     
     def stop_movement(self, piece, row, col):
@@ -127,7 +127,7 @@ class Game:
 
         for int_pos in intermediate_pos:
             row_int, col_int = int_pos
-            if (self.board.get_piece(row_int, col_int) != 0) and (row_int != row or col_int != col):
+            if (self.board.get_piece(row_int, col_int) != 0 or (row_int == ROWS//2 and col_int == ROWS//2)) and (row_int != row or col_int != col):
                 return True
 
     def get_valid_moves(self, piece):

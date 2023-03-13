@@ -22,6 +22,8 @@ class Spot:
     def get_pos(self):
         return self.row, self.col
 
-
     def get_color(self):
-            return self.color
+        return self.color
+    
+    def set_color(self, color):
+        self.color = color
