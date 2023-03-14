@@ -28,9 +28,18 @@ def main():
         clock.tick(FPS)
 
         if game.game_state == State.PLAY_STATE:
+            pos = None
             if game.winner() != None:
                 print(game.winner())
                 game.reset()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        game.reset()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    pos = pygame.mouse.get_pos()
             if game.turn == game.ai1_color:
                 # ai_move(turn, game, ai1_diff)  ->  make an ai move
                 game._move_ai()
@@ -38,17 +47,10 @@ def main():
                 # ai_move(turn, game, ai2_diff)  ->  make an ai move 
                 game._move_ai()
             else:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        run = False
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        pos = pygame.mouse.get_pos()
-                        row, col = get_row_col_from_mouse(pos)
-                        if row < ROWS and row >= 0 and col < ROWS and col >= 0:
-                            game.select(row, col)
-                    elif event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_ESCAPE:
-                            game.reset()
+                if pos != None:
+                    row, col = get_row_col_from_mouse(pos)
+                    if row < ROWS and row >= 0 and col < ROWS and col >= 0:
+                        game.select(row, col)
         elif game.game_state == State.P2COLORSIDE_STATE:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

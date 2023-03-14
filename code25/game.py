@@ -62,7 +62,7 @@ class Game:
                     texto_rect = texto.get_rect()
                     texto_rect.center = item["pos2"]
                     self.win.blit(texto, texto_rect)
-                elif item["text"] == "Difficulty1":
+                elif item["text"] == "Difficulty1" and self.selected_player1_menu_type == 1:
                     texto = self.font_opt.render(item["type"][self.selected_player1_menu_diff], True, BTN)
                     texto_rect = texto.get_rect()
                     texto_rect.center = item["pos2"]
@@ -72,7 +72,7 @@ class Game:
                     texto_rect = texto.get_rect()
                     texto_rect.center = item["pos2"]
                     self.win.blit(texto, texto_rect)
-                elif item["text"] == "Difficulty2":
+                elif item["text"] == "Difficulty2" and self.selected_player2_menu_type == 1:
                     texto = self.font_opt.render(item["type"][self.selected_player2_menu_diff], True, BTN)
                     texto_rect = texto.get_rect()
                     texto_rect.center = item["pos2"]
