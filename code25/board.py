@@ -8,6 +8,7 @@ class Board:
     def __init__(self):
         self.board = []
         self.pieces = []
+        self.p1_color = self.p2_color = 0
         self.blue_left = self.white_left = 5
         self.blue_goal = self.white_goal = 0
         self.create_board()
@@ -31,13 +32,28 @@ class Board:
                     self.pieces[row][col] = Piece(row, col, c1)
                 elif row == ROWS - 1:
                     self.pieces[row][col] = Piece(row, col, c2)
+        
+        self.p1_color = c1;
+        self.p2_color = c2;
 
+    def get_all_pieces(self, color):
+        pcs = []
+        for pp in self.pieces:
+            for piece in pp:
+                if piece != 0 and piece.color == color and piece.goal == False:
+                    pcs.append(piece)
+        return pcs
 
     def get_piece(self, row, col):
         return self.pieces[row][col]
+    
+    def h1(self, color):
+        if color == BLUE:
+            return (self.blue_goal - self.white_goal) + (self.blue_left - self.white_left)*2
+        return (self.white_goal - self.blue_goal) + (self.white_left - self.blue_left)*2
+  
 
     def create_board(self):
-
         for row in range(ROWS):
             self.board.append([])
             for col in range(COLS):
@@ -59,7 +75,6 @@ class Board:
                 self.pieces[row].append(0)
         
     def draw(self, win):
-        win.fill((215, 171, 170))
         pygame.draw.rect(win, WOOD, (OFFSET - 20, OFFSET - 20, SQUARE_SIZE*ROWS + 40, SQUARE_SIZE*ROWS + 40), 0, 5)
         pygame.draw.rect(win, (92, 64, 51), (OFFSET - 20, OFFSET - 20, SQUARE_SIZE*ROWS + 40, SQUARE_SIZE*ROWS + 40), 5, 5)
         self.draw_squares(win)
@@ -98,4 +113,96 @@ class Board:
             return BLUE
         
         return None
+    
+    def get_intermediate_positions(self, start, end):
+
+        intermediate_positions = []
+        
+        dx = end[0] - start[0]
+        dy = end[1] - start[1]
+        
+        x_direction = 1 if dx > 0 else -1
+        y_direction = 1 if dy > 0 else -1
+        
+        abs_dx = abs(dx)
+        abs_dy = abs(dy)
+        
+        max_steps = max(abs_dx, abs_dy)
+        
+        x_step = abs_dx / max_steps if max_steps > 0 else 0
+        y_step = abs_dy / max_steps if max_steps > 0 else 0
+        
+        x = start[0]
+        y = start[1]
+        
+        for i in range(max_steps):
+            intermediate_positions.append((int(round(x)), int(round(y))))
+            x += x_step * x_direction
+            y += y_step * y_direction
+        
+        intermediate_positions.append(end)
+        intermediate_positions.pop(0)
+        
+        return intermediate_positions
+
+    def color_changes(self, piece, row, col, turn):
+        piece.row_ = piece.row
+        piece.col_ = piece.col
+        color_changes = 0
+        intermediate_pos = self.get_intermediate_positions((piece.row, piece.col), (row, col))
+        self.board[ROWS//2][ROWS//2].set_color(turn)
+        for int_pos in intermediate_pos:
+            row_int, col_int = int_pos
+            if (piece.color != self.board[row_int][col_int].get_color()) or (self.board[piece.row_][piece.col_].get_color() != self.board[row_int][col_int].get_color()):
+                color_changes += 1
+                piece.row_ = row_int
+                piece.col_ = col_int
+        self.board[ROWS//2][ROWS//2].set_color(BLUE_WHITE)
+        return color_changes
+    
+    def stop_movement(self, piece, row, col):
+        intermediate_pos = self.get_intermediate_positions((piece.row, piece.col), (row, col))
+
+        for int_pos in intermediate_pos:
+            row_int, col_int = int_pos
+            if (self.get_piece(row_int, col_int) != 0 or (row_int == ROWS//2 and col_int == ROWS//2)) and (row_int != row or col_int != col):
+                return True
+
+    def get_valid_moves(self, piece, turn):
+        possible_moves = set()
+        valid_moves = set()
+        left = piece.col
+        right = piece.col
+        up = piece.row
+        down = piece.row
+    	
+        for i in range(0,ROWS-1):
+            left -= 1
+            right += 1
+            up -= 1
+            down += 1
+            possible_moves.update({(piece.row, left), (piece.row, right), (up, piece.col), (down, piece.col), (up, left), (up, right), (down, left), (down, right)})
+        
+
+        for move in possible_moves:
+            row, col = move
+            if((0 <= row < ROWS) and (0 <= col < ROWS)):
+                if self.get_piece(row, col) == 0 or (self.get_piece(row, col).color != turn and self.get_piece(row, col).goal == False):
+                    if self.color_changes(piece, row, col, turn) < 2 and not(self.stop_movement(piece, row, col)):
+                        valid_moves.add(move)
+                            
+        return valid_moves
+    
+    def move(self, piece, row, col):
+        self.pieces[piece.row][piece.col], self.pieces[row][col] = self.pieces[row][col], self.pieces[piece.row][piece.col]
+        piece.move(row, col)
+
+        if (row == ROWS - 1 and piece.color == WHITE and self.p1_color == WHITE) or (row == 0 and piece.color == WHITE and self.p1_color == BLUE) or (row == 0 and piece.color == BLUE and self.p1_color == WHITE) or (row == ROWS - 1 and piece.color == BLUE and self.p1_color == BLUE):
+            piece.make_goal()
+            if piece.color == WHITE:
+                self.white_goal += 1
+                self.white_left -= 1
+            else:
+                self.blue_goal += 1
+                self.blue_left -= 1
     
