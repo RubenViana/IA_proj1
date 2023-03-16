@@ -1,6 +1,7 @@
 import pygame
 from code25.constants import WIDTH, HEIGHT, SQUARE_SIZE, OFFSET, RED, BLACK, WHITE, ROWS, BLUE
 from code25.game import Game, State
+from code25.minimax import minimax
 
 pygame.init()
 
@@ -9,8 +10,6 @@ FPS = 60
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Code25')
 
-# Set up the font
-FONT = pygame.font.SysFont("Arial", 40, bold=True)
 
 def get_row_col_from_mouse(pos):
     x, y = pos
@@ -26,7 +25,6 @@ def main():
 
     while run:
         clock.tick(FPS)
-
         if game.game_state == State.PLAY_STATE:
             pos = None
             if game.winner() != None:
@@ -41,11 +39,23 @@ def main():
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
             if game.turn == game.ai1_color:
-                # ai_move(turn, game, ai1_diff)  ->  make an ai move
-                game._move_ai()
+                # pygame.time.wait(1000)
+                if game.ai1_diff == 0:
+                    eval, new_board = minimax(game.board, 1, True, game.p1_color, game.p2_color, game)  #easy mode
+                elif game.ai1_diff == 1:
+                    eval, new_board = minimax(game.board, 2, True, game.p1_color, game.p2_color, game)  #medium mode
+                elif game.ai1_diff == 2:
+                    eval, new_board = minimax(game.board, 3, True, game.p1_color, game.p2_color, game)  #hard mode -> use monte carlo 
+                game._move_ai(new_board)
             elif game.turn == game.ai2_color:
-                # ai_move(turn, game, ai2_diff)  ->  make an ai move 
-                game._move_ai()
+                # pygame.time.wait(1000)
+                if game.ai2_diff == 0:
+                    eval, new_board = minimax(game.board, 1, True, game.p2_color, game.p1_color, game)  #easy mode
+                elif game.ai2_diff == 1:
+                    eval, new_board = minimax(game.board, 2, True, game.p2_color, game.p1_color, game)  #medium mode
+                elif game.ai1_diff == 2:
+                    eval, new_board = minimax(game.board, 3, True, game.p2_color, game.p1_color, game)  #medium mode
+                game._move_ai(new_board)
             else:
                 if pos != None:
                     row, col = get_row_col_from_mouse(pos)
