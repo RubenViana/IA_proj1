@@ -47,11 +47,27 @@ class Board:
     def get_piece(self, row, col):
         return self.pieces[row][col]
     
+    def goal_distance(self, row, line):
+        return abs(row - line)
+    
     def h1(self, color):
         if color == BLUE:
-            return (self.blue_goal - self.white_goal) + (self.blue_left - self.white_left)*2
-        return (self.white_goal - self.blue_goal) + (self.white_left - self.blue_left)*2
-  
+            return (self.blue_goal - self.white_goal)*2 + (self.blue_left - self.white_left)
+        return (self.white_goal - self.blue_goal)*2 + (self.white_left - self.blue_left)
+    
+    def h2(self, color):
+        dist = 0
+        if color == self.p1_color:
+            line = ROWS - 1
+        else:
+            line = 0
+        pieces = self.get_all_pieces(color)
+        for piece in pieces:
+            row = piece.row
+            dist += self.goal_distance(row, line)   
+
+        print("dist:" + str(dist))
+        return 1/dist
 
     def create_board(self):
         for row in range(ROWS):
@@ -97,19 +113,29 @@ class Board:
     # ter uma única peça goal? Ganha o branco por ter todas as suas peças como goal ou ganha o blue por ter comido todas as peças do branco?
     def winner(self):
         if self.white_goal > self.blue_goal and (self.white_left == self.white_goal or self.blue_left == self.blue_goal):
+            print("A")
+            print(self.white_goal)
+            print(self.blue_goal)
+            print(self.white_left)
+            print(self.blue_left)
             return WHITE
         elif self.white_goal == self.blue_goal and (self.white_left == self.white_goal or self.blue_left == self.blue_goal):
             if self.white_left > self.blue_left:
+                print("B")
                 return WHITE
         elif self.blue_left <= 0:
+            print("C")
             return WHITE
         
         if self.blue_goal > self.white_goal and (self.white_left == self.white_goal or self.blue_left == self.blue_goal):
+            print("D")
             return BLUE
         elif self.blue_goal == self.white_goal and (self.white_left == self.white_goal or self.blue_left == self.blue_goal):
             if self.blue_left > self.white_left:
+                print("E")
                 return BLUE
         elif self.white_left <= 0:
+            print("F")
             return BLUE
         
         return None
@@ -201,8 +227,6 @@ class Board:
             piece.make_goal()
             if piece.color == WHITE:
                 self.white_goal += 1
-                self.white_left -= 1
             else:
                 self.blue_goal += 1
-                self.blue_left -= 1
     
