@@ -6,7 +6,7 @@ DELAY = 0
 
 def minimax(position, depth, max_player, color1, color2, game, alpha=float('-inf'), beta=float('inf')):     #position -> board_state
     if depth == 0 or position.winner() != None:
-        return position.h1(color1), position
+        return position.h2(color1), position
     
     if max_player:
         maxEval = float('-inf')
