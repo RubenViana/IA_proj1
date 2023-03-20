@@ -53,7 +53,7 @@ def main():
                     eval, new_board = minimax(game.board, 1, True, game.p2_color, game.p1_color, game)  #easy mode
                 elif game.ai2_diff == 1:
                     eval, new_board = minimax(game.board, 2, True, game.p2_color, game.p1_color, game)  #medium mode
-                elif game.ai1_diff == 2:
+                elif game.ai2_diff == 2:
                     eval, new_board = minimax(game.board, 3, True, game.p2_color, game.p1_color, game)  #medium mode
                 game._move_ai(new_board)
             else:

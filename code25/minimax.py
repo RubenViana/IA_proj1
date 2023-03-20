@@ -4,7 +4,7 @@ from .constants import SQUARE_SIZE, OFFSET, GREY
 
 DELAY = 0
 
-def minimax(position, depth, max_player, color1, color2, game):     #position -> board_state
+def minimax(position, depth, max_player, color1, color2, game, alpha=float('-inf'), beta=float('inf')):     #position -> board_state
     if depth == 0 or position.winner() != None:
         return position.h1(color1), position
     
@@ -12,8 +12,10 @@ def minimax(position, depth, max_player, color1, color2, game):     #position ->
         maxEval = float('-inf')
         best_move = None
         for move in get_all_board_moves(position, color1, game):
-            evaluation = minimax(move, depth-1, False, color1, color2, game)[0]
+            evaluation = minimax(move, depth-1, False, color1, color2, game, alpha, beta)[0]
             maxEval = max(maxEval, evaluation)
+            alpha = max(alpha, evaluation)
+            if beta <= alpha: break
             if maxEval == evaluation:
                 best_move = move
         
@@ -22,8 +24,10 @@ def minimax(position, depth, max_player, color1, color2, game):     #position ->
         minEval = float('inf')
         best_move = None
         for move in get_all_board_moves(position, color2, game):
-            evaluation = minimax(move, depth-1, True, color1, color2, game)[0]
+            evaluation = minimax(move, depth-1, True, color1, color2, game, alpha, beta)[0]
             minEval = min(minEval, evaluation)
+            beta = min(beta, evaluation)
+            if beta <= alpha: break
             if minEval == evaluation:
                 best_move = move
         
@@ -42,7 +46,7 @@ def get_all_board_moves(board, color, game):
     for piece in board.get_all_pieces(color):
         valid_moves = board.get_valid_moves(piece, color)
         for move in valid_moves:
-            draw_valid_moves(game, board, piece)
+            #draw_valid_moves(game, board, piece)
             rp = None
             tmp_board = deepcopy(board)
             tmp_piece = tmp_board.get_piece(piece.row, piece.col)
