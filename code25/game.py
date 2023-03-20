@@ -25,10 +25,8 @@ class Game:
                 {"text": "Quit", "position": (WIDTH // 2, 600)}
             ]
         self.player_menu_opts = [
-                {"text": "Player1", "type": ["Human", "Machine"], "pos1": (WIDTH // 3 + 20, 280), "pos2": (WIDTH*2 // 3 - 20, 280)},
-                {"text": "Difficulty1", "type": ["Easy", "Medium", "Hard"], "pos1": (WIDTH // 3 + 20, 350), "pos2": (WIDTH*2 // 3 - 20, 350)},
-                {"text": "Player2", "type": ["Human", "Machine"], "pos1": (WIDTH // 3 + 20, 480), "pos2": (WIDTH*2 // 3 - 20, 480)},
-                {"text": "Difficulty2", "type": ["Easy", "Medium", "Hard"], "pos1": (WIDTH // 3 + 20, 550), "pos2": (WIDTH*2 // 3 - 20, 550)},
+                {"text": "Player1", "type": ["Human", "CPU1", "CPU2", "CPU3"], "pos1": (WIDTH // 2, 340), "pos2": (WIDTH // 2, 385)},
+                {"text": "Player2", "type": ["Human", "CPU1", "CPU2", "CPU3"], "pos1": (WIDTH // 2, 480), "pos2": (WIDTH // 2, 525)},
                 {"text": "START", "pos1": (WIDTH // 2, 670)}
             ]
     
@@ -40,17 +38,17 @@ class Game:
 
             for i, item in enumerate(self.player_menu_opts):
                 if i == self.selected_player_menu_opts:
-                    if i == 4:
+                    if i == 2:
                         text = self.font.render(item["text"], True, BTN_HOVER)
                     else:
                         text = self.font.render(item["text"], True, BTN_HOVER)
                         texto = self.font.render("<", True, BTN_HOVER)
                         texto_rect = texto.get_rect()
-                        texto_rect.center = (item["pos2"][0] - 70, item["pos2"][1])
+                        texto_rect.center = (item["pos2"][0] - 70, item["pos2"][1] - 5)
                         self.win.blit(texto, texto_rect)
                         texto = self.font.render(">", True, BTN_HOVER)
                         texto_rect = texto.get_rect()
-                        texto_rect.center = (item["pos2"][0] + 70, item["pos2"][1])
+                        texto_rect.center = (item["pos2"][0] + 70, item["pos2"][1] - 5)
                         self.win.blit(texto, texto_rect)
                 else:
                     text = self.font.render(item["text"], True, BTN)
@@ -63,18 +61,8 @@ class Game:
                     texto_rect = texto.get_rect()
                     texto_rect.center = item["pos2"]
                     self.win.blit(texto, texto_rect)
-                elif item["text"] == "Difficulty1" and self.selected_player1_menu_type == 1:
-                    texto = self.font_opt.render(item["type"][self.selected_player1_menu_diff], True, BTN)
-                    texto_rect = texto.get_rect()
-                    texto_rect.center = item["pos2"]
-                    self.win.blit(texto, texto_rect)
                 elif item["text"] == "Player2":
                     texto = self.font_opt.render(item["type"][self.selected_player2_menu_type], True, BTN)
-                    texto_rect = texto.get_rect()
-                    texto_rect.center = item["pos2"]
-                    self.win.blit(texto, texto_rect)
-                elif item["text"] == "Difficulty2" and self.selected_player2_menu_type == 1:
-                    texto = self.font_opt.render(item["type"][self.selected_player2_menu_diff], True, BTN)
                     texto_rect = texto.get_rect()
                     texto_rect.center = item["pos2"]
                     self.win.blit(texto, texto_rect)
@@ -165,9 +153,9 @@ class Game:
 
     def set_players(self):
         if self.selected_player1_menu_type != 0:
-            self.ai1_diff = self.selected_player1_menu_diff
+            self.ai1_diff = self.selected_player1_menu_type - 1
         if self.selected_player2_menu_type != 0:
-            self.ai2_diff = self.selected_player2_menu_diff
+            self.ai2_diff = self.selected_player2_menu_type - 1
             n_rotations = random.randrange(0,4)
             n_side = random.randrange(0,1)
             for r in range(n_rotations):
