@@ -108,23 +108,15 @@ def main():
                     elif event.key == pygame.K_LEFT:
                         if game.selected_player_menu_opts == 0:
                             game.selected_player1_menu_type = (game.selected_player1_menu_type - 1) % len(game.player_menu_opts[0]["type"])
-                        elif game.selected_player_menu_opts == 1 and game.player_menu_opts[0]["type"][game.selected_player1_menu_type] == "Machine":
-                            game.selected_player1_menu_diff = (game.selected_player1_menu_diff - 1) % len(game.player_menu_opts[1]["type"])
-                        elif game.selected_player_menu_opts == 2:
-                            game.selected_player2_menu_type = (game.selected_player2_menu_type - 1) % len(game.player_menu_opts[2]["type"])
-                        elif game.selected_player_menu_opts == 3 and game.player_menu_opts[2]["type"][game.selected_player2_menu_type] == "Machine":
-                            game.selected_player2_menu_diff = (game.selected_player2_menu_diff - 1) % len(game.player_menu_opts[3]["type"])
+                        elif game.selected_player_menu_opts == 1:
+                            game.selected_player2_menu_type = (game.selected_player2_menu_type - 1) % len(game.player_menu_opts[1]["type"])
                     elif event.key == pygame.K_RIGHT:
                         if game.selected_player_menu_opts == 0:
                             game.selected_player1_menu_type = (game.selected_player1_menu_type + 1) % len(game.player_menu_opts[0]["type"])
-                        elif game.selected_player_menu_opts == 1 and game.player_menu_opts[0]["type"][game.selected_player1_menu_type] == "Machine":
-                            game.selected_player1_menu_diff = (game.selected_player1_menu_diff + 1) % len(game.player_menu_opts[1]["type"])
-                        elif game.selected_player_menu_opts == 2:
-                            game.selected_player2_menu_type = (game.selected_player2_menu_type + 1) % len(game.player_menu_opts[2]["type"])
-                        elif game.selected_player_menu_opts == 3 and game.player_menu_opts[2]["type"][game.selected_player2_menu_type] == "Machine":
-                            game.selected_player2_menu_diff = (game.selected_player2_menu_diff + 1) % len(game.player_menu_opts[3]["type"])
+                        elif game.selected_player_menu_opts == 1:
+                            game.selected_player2_menu_type = (game.selected_player2_menu_type + 1) % len(game.player_menu_opts[1]["type"])
                     elif event.key == pygame.K_RETURN:
-                        if game.selected_player_menu_opts == 4:
+                        if game.selected_player_menu_opts == 2:
                             game.game_state = game.set_players()
         game.update()
     
