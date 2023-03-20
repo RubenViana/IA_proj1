@@ -43,9 +43,9 @@ def main():
                 if game.ai1_diff == 0:
                     eval, new_board = minimax(game.board, 1, True, game.p1_color, game.p2_color, game)  #easy mode
                 elif game.ai1_diff == 1:
-                    eval, new_board = minimax(game.board, 2, True, game.p1_color, game.p2_color, game)  #medium mode
+                    eval, new_board = minimax(game.board, 4, True, game.p1_color, game.p2_color, game)  #medium mode
                 elif game.ai1_diff == 2:
-                    eval, new_board = minimax(game.board, 3, True, game.p1_color, game.p2_color, game)  #hard mode -> use monte carlo
+                    eval, new_board = minimax(game.board, 4, True, game.p1_color, game.p2_color, game)  #hard mode -> use monte carlo
                 #print(f"eval : {eval} | dist : {1/eval}")
                 game._move_ai(new_board)
             elif game.turn == game.ai2_color:
@@ -53,9 +53,9 @@ def main():
                 if game.ai2_diff == 0:
                     eval, new_board = minimax(game.board, 1, True, game.p2_color, game.p1_color, game)  #easy mode
                 elif game.ai2_diff == 1:
-                    eval, new_board = minimax(game.board, 2, True, game.p2_color, game.p1_color, game)  #medium mode
+                    eval, new_board = minimax(game.board, 4, True, game.p2_color, game.p1_color, game)  #medium mode
                 elif game.ai2_diff == 2:
-                    eval, new_board = minimax(game.board, 3, True, game.p2_color, game.p1_color, game)  #medium mode
+                    eval, new_board = minimax(game.board, 4, True, game.p2_color, game.p1_color, game)  #hard mode
                 #print(f"eval : {eval} | dist : {1/eval}")
                 game._move_ai(new_board)
             else:
