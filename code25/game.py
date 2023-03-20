@@ -44,11 +44,11 @@ class Game:
                         text = self.font.render(item["text"], True, BTN_HOVER)
                         texto = self.font.render("<", True, BTN_HOVER)
                         texto_rect = texto.get_rect()
-                        texto_rect.center = (item["pos2"][0] - 70, item["pos2"][1] - 5)
+                        texto_rect.center = (item["pos2"][0] - 70, item["pos2"][1])
                         self.win.blit(texto, texto_rect)
                         texto = self.font.render(">", True, BTN_HOVER)
                         texto_rect = texto.get_rect()
-                        texto_rect.center = (item["pos2"][0] + 70, item["pos2"][1] - 5)
+                        texto_rect.center = (item["pos2"][0] + 70, item["pos2"][1])
                         self.win.blit(texto, texto_rect)
                 else:
                     text = self.font.render(item["text"], True, BTN)

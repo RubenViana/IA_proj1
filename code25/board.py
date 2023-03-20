@@ -113,29 +113,19 @@ class Board:
     # ter uma única peça goal? Ganha o branco por ter todas as suas peças como goal ou ganha o blue por ter comido todas as peças do branco?
     def winner(self):
         if self.white_goal > self.blue_goal and (self.white_left == self.white_goal or self.blue_left == self.blue_goal):
-            print("A")
-            print(self.white_goal)
-            print(self.blue_goal)
-            print(self.white_left)
-            print(self.blue_left)
             return WHITE
         elif self.white_goal == self.blue_goal and (self.white_left == self.white_goal or self.blue_left == self.blue_goal):
             if self.white_left > self.blue_left:
-                print("B")
                 return WHITE
         elif self.blue_left <= 0:
-            print("C")
             return WHITE
         
         if self.blue_goal > self.white_goal and (self.white_left == self.white_goal or self.blue_left == self.blue_goal):
-            print("D")
             return BLUE
         elif self.blue_goal == self.white_goal and (self.white_left == self.white_goal or self.blue_left == self.blue_goal):
             if self.blue_left > self.white_left:
-                print("E")
                 return BLUE
         elif self.white_left <= 0:
-            print("F")
             return BLUE
         
         return None

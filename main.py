@@ -1,7 +1,7 @@
 import pygame
 from code25.constants import WIDTH, HEIGHT, SQUARE_SIZE, OFFSET, RED, BLACK, WHITE, ROWS, BLUE
 from code25.game import Game, State
-from code25.minimax import minimax
+from code25.bot import minimax
 
 pygame.init()
 
