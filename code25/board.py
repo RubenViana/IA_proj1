@@ -33,8 +33,8 @@ class Board:
                 elif row == ROWS - 1:
                     self.pieces[row][col] = Piece(row, col, c2)
         
-        self.p1_color = c1;
-        self.p2_color = c2;
+        self.p1_color = c1
+        self.p2_color = c2
 
     def get_all_pieces(self, color):
         pcs = []
