@@ -9,6 +9,7 @@ class State(Enum):
     PLAY_STATE = 1
     P2COLORSIDE_STATE = 2
     PLAY_MENU_STATE = 3
+    SETTINGS_MENU_STATE = 4
 
 
 class Game:
@@ -21,16 +22,21 @@ class Game:
         self.btn_font = pygame.font.SysFont("arial", 20, bold=True)
         self.main_menu_items = [
                 {"text": "Play", "position": (WIDTH // 2, 400)},
-                {"text": "Rules", "position": (WIDTH // 2, 500)},
+                {"text": "Settings", "position": (WIDTH // 2, 500)},
                 {"text": "Quit", "position": (WIDTH // 2, 600)}
             ]
         self.player_menu_opts = [
-                {"text": "Player1", "type": ["Human", "CPU1", "CPU2", "CPU3"], "pos1": (WIDTH // 2, 340), "pos2": (WIDTH // 2, 385)},
-                {"text": "Player2", "type": ["Human", "CPU1", "CPU2", "CPU3"], "pos1": (WIDTH // 2, 480), "pos2": (WIDTH // 2, 525)},
+                {"text": "Player 1", "type": ["Human", "CPU I", "CPU II", "CPU III"], "pos1": (WIDTH // 2, 340), "pos2": (WIDTH // 2, 385)},
+                {"text": "Player 2", "type": ["Human", "CPU I", "CPU II", "CPU III"], "pos1": (WIDTH // 2, 480), "pos2": (WIDTH // 2, 525)},
                 {"text": "START", "pos1": (WIDTH // 2, 670)}
             ]
     
     def update(self):
+        if self.game_state == State.SETTINGS_MENU_STATE:
+            self.win.fill(BACKGROUND)
+            esc_text = self.btn_font.render("[ESC] Back", True, BTN)
+            self.win.blit(esc_text, (10, 10))
+
         if self.game_state == State.PLAY_MENU_STATE:
             self.win.fill(BACKGROUND)
             esc_text = self.btn_font.render("[ESC] Back", True, BTN)
@@ -56,12 +62,12 @@ class Game:
                 text_rect.center = item["pos1"]
                 self.win.blit(text, text_rect)
 
-                if item["text"] == "Player1":
+                if item["text"] == "Player 1":
                     texto = self.font_opt.render(item["type"][self.selected_player1_menu_type], True, BTN)
                     texto_rect = texto.get_rect()
                     texto_rect.center = item["pos2"]
                     self.win.blit(texto, texto_rect)
-                elif item["text"] == "Player2":
+                elif item["text"] == "Player 2":
                     texto = self.font_opt.render(item["type"][self.selected_player2_menu_type], True, BTN)
                     texto_rect = texto.get_rect()
                     texto_rect.center = item["pos2"]

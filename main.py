@@ -1,7 +1,7 @@
 import pygame
 from code25.constants import WIDTH, HEIGHT, SQUARE_SIZE, OFFSET, RED, BLACK, WHITE, ROWS, BLUE
 from code25.game import Game, State
-from code25.bot import minimax
+from code25.bot import minimax, randomPlay
 
 pygame.init()
 
@@ -41,9 +41,9 @@ def main():
             if game.turn == game.ai1_color:
                 # pygame.time.wait(1000)
                 if game.ai1_diff == 0:
-                    eval, new_board = minimax(game.board, 1, True, game.p1_color, game.p2_color, game)  #easy mode
+                    new_board = randomPlay(game.board, game.p1_color, game)  #easy mode
                 elif game.ai1_diff == 1:
-                    eval, new_board = minimax(game.board, 4, True, game.p1_color, game.p2_color, game)  #medium mode
+                    eval, new_board = minimax(game.board, 2, True, game.p1_color, game.p2_color, game)  #medium mode
                 elif game.ai1_diff == 2:
                     eval, new_board = minimax(game.board, 4, True, game.p1_color, game.p2_color, game)  #hard mode -> use monte carlo
                 #print(f"eval : {eval} | dist : {1/eval}")
@@ -51,9 +51,9 @@ def main():
             elif game.turn == game.ai2_color:
                 # pygame.time.wait(1000)
                 if game.ai2_diff == 0:
-                    eval, new_board = minimax(game.board, 1, True, game.p2_color, game.p1_color, game)  #easy mode
+                    new_board = randomPlay(game.board, game.p2_color, game)  #easy mode
                 elif game.ai2_diff == 1:
-                    eval, new_board = minimax(game.board, 4, True, game.p2_color, game.p1_color, game)  #medium mode
+                    eval, new_board = minimax(game.board, 2, True, game.p2_color, game.p1_color, game)  #medium mode
                 elif game.ai2_diff == 2:
                     eval, new_board = minimax(game.board, 4, True, game.p2_color, game.p1_color, game)  #hard mode
                 #print(f"eval : {eval} | dist : {1/eval}")
@@ -93,7 +93,7 @@ def main():
                         if game.selected_main_menu_item == 0:
                             game.game_state = State.PLAY_MENU_STATE
                         elif game.selected_main_menu_item == 1:
-                            print("Rules")
+                            game.game_state = State.SETTINGS_MENU_STATE
                         elif game.selected_main_menu_item == 2:
                             run = False
         elif game.game_state == State.PLAY_MENU_STATE:
@@ -120,6 +120,13 @@ def main():
                     elif event.key == pygame.K_RETURN:
                         if game.selected_player_menu_opts == 2:
                             game.game_state = game.set_players()
+        elif game.game_state == State.SETTINGS_MENU_STATE:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        game.reset()
         game.update()
     
     pygame.quit()

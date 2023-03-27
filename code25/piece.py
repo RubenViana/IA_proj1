@@ -1,4 +1,4 @@
-from .constants import RED, WHITE, SQUARE_SIZE, OFFSET, BLUE, WHITE
+from .constants import RED, WHITE, SQUARE_SIZE, OFFSET, BLUE, WHITE, WHITE_PIECE, BLUE_PIECE
 import pygame
 
 class Piece:
@@ -24,10 +24,12 @@ class Piece:
     def draw(self, win):
         radius = SQUARE_SIZE//2 - self.PADDING
         if self.color == WHITE:
-            pygame.draw.circle(win, BLUE, (self.x, self.y), radius + self.OUTLINE)
+            #pygame.draw.circle(win, BLUE, (self.x, self.y), radius + self.OUTLINE)
+            win.blit(WHITE_PIECE, (OFFSET + SQUARE_SIZE * self.col + 5, OFFSET + SQUARE_SIZE * self.row + 5))
         elif self.color == BLUE:
-            pygame.draw.circle(win, WHITE, (self.x, self.y), radius + self.OUTLINE)
-        pygame.draw.circle(win, self.color, (self.x, self.y), radius)
+            #pygame.draw.circle(win, WHITE, (self.x, self.y), radius + self.OUTLINE)
+            win.blit(BLUE_PIECE, (OFFSET + SQUARE_SIZE * self.col + 5, OFFSET + SQUARE_SIZE * self.row + 5))
+        #pygame.draw.circle(win, self.color, (self.x, self.y), radius)
         
 
     def move(self, row, col):

@@ -19,3 +19,10 @@ BTN = (65, 58, 83)
 BTN_HOVER = (195, 74, 54)
 
 BACKGROUND = (251, 234, 255)
+
+WHITE_TILE = pygame.transform.scale(pygame.image.load('images/whiteTile.png'), (SQUARE_SIZE, SQUARE_SIZE))
+BLUE_TILE = pygame.transform.scale(pygame.image.load('images/blueTile.png'), (SQUARE_SIZE, SQUARE_SIZE))
+BLUE_WHITE_TILE = pygame.transform.scale(pygame.image.load('images/blueWhiteTile.jpg'), (SQUARE_SIZE, SQUARE_SIZE))
+
+WHITE_PIECE = pygame.transform.scale(pygame.image.load('images/whitePiece.png'), (SQUARE_SIZE - 10, SQUARE_SIZE - 10))
+BLUE_PIECE = pygame.transform.scale(pygame.image.load('images/bluePiece.png'), (SQUARE_SIZE - 10, SQUARE_SIZE - 10))

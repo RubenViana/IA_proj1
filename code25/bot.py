@@ -1,5 +1,6 @@
 from copy import deepcopy
 import pygame
+import random
 from .constants import SQUARE_SIZE, OFFSET, GREY
 
 DELAY = 0
@@ -66,3 +67,10 @@ def draw_valid_moves(game, board, piece):
     game.draw_valid_moves(moves)
     pygame.display.update()
     pygame.time.wait(DELAY)
+
+
+
+def randomPlay(board, color, game):
+    board_states = get_all_board_moves(board, color, game)
+    random_move = random.choice(board_states)
+    return random_move
