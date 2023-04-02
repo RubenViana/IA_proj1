@@ -51,9 +51,14 @@ class Board:
         return abs(row - line)
     
     def h1(self, color):
-        if color == BLUE:
-            return (self.blue_goal - self.white_goal)*4 + (self.blue_left - self.white_left)
-        return (self.white_goal - self.blue_goal)*4 + (self.white_left - self.blue_left)
+        if color == BLUE and self.white_goal > self.blue_goal:
+            return (self.blue_goal)*5 + (self.blue_left - self.white_left)*2
+        elif color == BLUE and self.blue_goal >= self.white_goal:
+            return (self.blue_goal)*2 + (self.blue_left - self.white_left)*5
+        elif color == WHITE and self.blue_goal > self.white_goal:
+            return (self.white_goal)*5 + (self.white_left - self.blue_left)*2
+        elif color == WHITE and self.white_goal >= self.blue_goal:
+            return (self.white_goal)*2 + (self.white_left - self.blue_left)*5
     
     def h2(self, color):
         dist = 0.01
@@ -67,7 +72,7 @@ class Board:
             dist += self.goal_distance(row, line)   
 
         #print("dist:" + str(dist))
-        return 2/dist + self.h1(color)
+        return 0.5/dist + float(self.h1(color))
 
     def create_board(self):
         for row in range(ROWS):
@@ -84,11 +89,19 @@ class Board:
             if (self.board[x][y].get_color() != BLUE) and (self.board[x][y].get_color() != BLUE_WHITE):
                 self.board[x][y] = Spot(x, y, BLUE)
                 i += 1
+        '''
+        self.board = [[Spot(0, 0, WHITE), Spot(0, 1, WHITE), Spot(0, 2, BLUE), Spot(0, 3, WHITE), Spot(0, 4, BLUE)], 
+                      [Spot(1, 0, WHITE), Spot(1, 1, WHITE), Spot(1, 2, WHITE), Spot(1, 3, BLUE), Spot(1, 4, BLUE)], 
+                      [Spot(2, 0, WHITE), Spot(2, 1, BLUE), Spot(2, 2, BLUE_WHITE), Spot(2, 3, WHITE), Spot(2, 4, BLUE)], 
+                      [Spot(3, 0, BLUE), Spot(3, 1, WHITE), Spot(3, 2, BLUE), Spot(3, 3, BLUE), Spot(3, 4, WHITE)], 
+                      [Spot(4, 0, BLUE), Spot(4, 1, BLUE), Spot(4, 2, WHITE), Spot(4, 3, WHITE), Spot(4, 4, BLUE)]]
+        '''
         
         for row in range(ROWS):
             self.pieces.append([])
             for col in range(COLS):
                 self.pieces[row].append(0)
+        
         
     def draw(self, win):
         pygame.draw.rect(win, WOOD, (OFFSET - 20, OFFSET - 20, SQUARE_SIZE*ROWS + 40, SQUARE_SIZE*ROWS + 40), 0, 5)

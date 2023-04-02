@@ -156,8 +156,8 @@ class Game:
             self.ai1_diff = self.selected_player1_menu_type - 1
         if self.selected_player2_menu_type != 0:
             self.ai2_diff = self.selected_player2_menu_type - 1
-            n_rotations = random.randrange(0,4)
-            n_side = random.randrange(0,1)
+            n_rotations = 0 #random.randrange(0,4) 0 
+            n_side = 0 #random.randrange(0,1) 0 
             for r in range(n_rotations):
                 self.board.rotate_board()
             if n_side == 0:
