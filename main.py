@@ -1,7 +1,7 @@
 import pygame
 from code25.constants import WIDTH, HEIGHT, SQUARE_SIZE, OFFSET, RED, BLACK, WHITE, ROWS, BLUE
 from code25.game import Game, State
-from code25.bot import minimax, randomPlay
+from code25.bot import minimax, randomPlay, main1
 
 pygame.init()
 
@@ -41,7 +41,7 @@ def main():
             if game.turn == game.ai1_color:
                 # pygame.time.wait(1000)
                 if game.ai1_diff == 0:
-                    new_board = randomPlay(game.board, game.p1_color, game)  #easy mode
+                    new_board = main1(game.board, game, game.p1_color, game.p2_color)  #easy mode
                 elif game.ai1_diff == 1:
                     eval, new_board = minimax(game.board, 2, True, game.p1_color, game.p2_color, game)  #medium mode
                 elif game.ai1_diff == 2:
@@ -51,7 +51,7 @@ def main():
             elif game.turn == game.ai2_color:
                 # pygame.time.wait(1000)
                 if game.ai2_diff == 0:
-                    new_board = randomPlay(game.board, game.p2_color, game)  #easy mode
+                    new_board = main1(game.board, game, game.p2_color, game.p2_color) #easy mode
                 elif game.ai2_diff == 1:
                     eval, new_board = minimax(game.board, 2, True, game.p2_color, game.p1_color, game)  #medium mode
                 elif game.ai2_diff == 2:
