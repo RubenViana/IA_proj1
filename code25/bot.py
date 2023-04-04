@@ -6,6 +6,16 @@ from .constants import SQUARE_SIZE, OFFSET, GREY
 
 DELAY = 0
 
+"""
+This function implements the minimax algorithm, which is a decision-making algorithm that is used to find the optimal
+move for a player in a two-player game. The algorithm works by recursively exploring the game tree, where the nodes
+represent the different possible moves that can be made by the players, and the leaves represent the outcome of the game
+(win, lose, or draw). The algorithm is called minimax because it alternates between minimizing the opponent's score
+and maximizing its own score. This function takes in a position (board state), the depth of the game tree to explore,
+a boolean to indicate if the current player is the maximizing player, the color of player 1, the color of player 2,
+the current game object, and the heuristic function to use (either h2 or h3). It returns the best score for the current
+player and the corresponding board state (move).
+"""
 def minimax(position, depth, max_player, color1, color2, game, h, alpha=float('-inf'), beta=float('inf')):     #position -> board_state
     if (depth == 0 or position.winner() != None) and h==0:
         return position.h3(color1), position
@@ -73,7 +83,7 @@ def draw_valid_moves(game, board, piece):
     pygame.time.wait(DELAY)
 
 
-
+#selects a random move from all possible moves
 def randomPlay(board, color, game):
     board_states = get_all_board_moves(board, color, game)
     random_move = random.choice(board_states)
