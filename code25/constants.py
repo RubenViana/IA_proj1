@@ -24,5 +24,7 @@ WHITE_TILE = pygame.transform.scale(pygame.image.load('images/whiteTile.png'), (
 BLUE_TILE = pygame.transform.scale(pygame.image.load('images/blueTile.png'), (SQUARE_SIZE, SQUARE_SIZE))
 BLUE_WHITE_TILE = pygame.transform.scale(pygame.image.load('images/blueWhiteTile.jpg'), (SQUARE_SIZE, SQUARE_SIZE))
 
-WHITE_PIECE = pygame.transform.scale(pygame.image.load('images/whitePiece.png'), (SQUARE_SIZE - 10, SQUARE_SIZE - 10))
-BLUE_PIECE = pygame.transform.scale(pygame.image.load('images/bluePiece.png'), (SQUARE_SIZE - 10, SQUARE_SIZE - 10))
+WHITE_PIECE = pygame.transform.scale(pygame.image.load('images/whitePiece.png'), (SQUARE_SIZE - 24, SQUARE_SIZE - 24))
+BLUE_PIECE = pygame.transform.scale(pygame.image.load('images/bluePiece.png'), (SQUARE_SIZE - 24, SQUARE_SIZE - 24))
+
+WOOD_BOARD = pygame.transform.scale(pygame.image.load('images/boardFrame.png'), (SQUARE_SIZE*ROWS + 40, SQUARE_SIZE*ROWS + 40))

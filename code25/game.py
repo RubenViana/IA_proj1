@@ -34,12 +34,16 @@ class Game:
     def update(self):
         if self.game_state == State.SETTINGS_MENU_STATE:
             self.win.fill(BACKGROUND)
-            esc_text = self.btn_font.render("[ESC] Back", True, BTN)
+            box = pygame.Rect((5, 3, 120, 35))
+            pygame.draw.rect(self.win, BTN, box, 0, 3)
+            esc_text = self.btn_font.render("[ESC] Back", True, WHITE)
             self.win.blit(esc_text, (10, 10))
 
         if self.game_state == State.PLAY_MENU_STATE:
             self.win.fill(BACKGROUND)
-            esc_text = self.btn_font.render("[ESC] Back", True, BTN)
+            box = pygame.Rect((5, 3, 120, 35))
+            pygame.draw.rect(self.win, BTN, box, 0, 3)
+            esc_text = self.btn_font.render("[ESC] Back", True, WHITE)
             self.win.blit(esc_text, (10, 10))
 
             for i, item in enumerate(self.player_menu_opts):
@@ -79,10 +83,16 @@ class Game:
 
             # Draw the menu items
             for i, item in enumerate(self.main_menu_items):
+                box = pygame.Rect((0, 0, 220, 80))
+                box.center = item["position"]
                 if i == self.selected_main_menu_item:
                     text = self.font_mm.render(item["text"], True, BTN_HOVER)
+                    pygame.draw.rect(self.win, WHITE, box, 0, 5)
+                    pygame.draw.rect(self.win, BTN_HOVER, box, 1, 5)
                 else:
-                    text = self.font_mm.render(item["text"], True, BTN)
+                    text = self.font_mm.render(item["text"], True, WHITE)
+                    pygame.draw.rect(self.win, BTN, box, 0, 5)
+                    pygame.draw.rect(self.win, WHITE, box, 1, 5)
                 text_rect = text.get_rect()
                 text_rect.center = item["position"]
                 self.win.blit(text, text_rect)
@@ -92,7 +102,9 @@ class Game:
             self.board.draw(self.win)
             self.draw_valid_moves(self.valid_moves)
 
-            esc_text = self.btn_font.render("[ESC] Back", True, BTN)
+            box = pygame.Rect((5, 3, 120, 35))
+            pygame.draw.rect(self.win, BTN, box, 0, 3)
+            esc_text = self.btn_font.render("[ESC] Back", True, WHITE)
             self.win.blit(esc_text, (10, 10))
 
             p1_text = self.font.render("PLAYER 1", True, BLACK)
@@ -111,12 +123,18 @@ class Game:
                 pygame.draw.polygon(self.win, (255,215,0), ((110, 680),(125, 695),(110, 710)))
 
         if self.game_state == State.P2COLORSIDE_STATE:
-            rotate_text = self.btn_font.render("[R] Rotate", True, BTN)
-            self.win.blit(rotate_text, (OFFSET + ROWS*SQUARE_SIZE // 2 - 240, OFFSET + (ROWS*SQUARE_SIZE) + 90))
-            s_select_text = self.btn_font.render("[S] Switch Color", True, BTN)
-            self.win.blit(s_select_text, (OFFSET + ROWS*SQUARE_SIZE // 2 - 115, OFFSET + (ROWS*SQUARE_SIZE) + 90))
-            sp_select_text = self.btn_font.render("[Space] Start Game", True, BTN)
-            self.win.blit(sp_select_text, (OFFSET + ROWS*SQUARE_SIZE // 2 + 60, OFFSET + (ROWS*SQUARE_SIZE) + 90))
+            box = pygame.Rect((OFFSET + ROWS*SQUARE_SIZE // 2 - 255, OFFSET + (ROWS*SQUARE_SIZE) + 80, 115, 40))
+            pygame.draw.rect(self.win, BTN, box, 0, 3)
+            rotate_text = self.btn_font.render("[R] Rotate", True, WHITE)
+            self.win.blit(rotate_text, (OFFSET + ROWS*SQUARE_SIZE // 2 - 245, OFFSET + (ROWS*SQUARE_SIZE) + 90))
+            box = pygame.Rect((OFFSET + ROWS*SQUARE_SIZE // 2 - 130, OFFSET + (ROWS*SQUARE_SIZE) + 80, 175, 40))
+            pygame.draw.rect(self.win, BTN, box, 0, 3)
+            s_select_text = self.btn_font.render("[S] Switch Color", True, WHITE)
+            self.win.blit(s_select_text, (OFFSET + ROWS*SQUARE_SIZE // 2 - 120, OFFSET + (ROWS*SQUARE_SIZE) + 90))
+            box = pygame.Rect((OFFSET + ROWS*SQUARE_SIZE // 2 + 55, OFFSET + (ROWS*SQUARE_SIZE) + 80, 205, 40))
+            pygame.draw.rect(self.win, BTN, box, 0, 3)
+            sp_select_text = self.btn_font.render("[Space] Start Game", True, WHITE)
+            self.win.blit(sp_select_text, (OFFSET + ROWS*SQUARE_SIZE // 2 + 65, OFFSET + (ROWS*SQUARE_SIZE) + 90))
 
 
         pygame.display.update()

@@ -25,10 +25,10 @@ class Piece:
         radius = SQUARE_SIZE//2 - self.PADDING
         if self.color == WHITE:
             #pygame.draw.circle(win, BLUE, (self.x, self.y), radius + self.OUTLINE)
-            win.blit(WHITE_PIECE, (OFFSET + SQUARE_SIZE * self.col + 5, OFFSET + SQUARE_SIZE * self.row + 5))
+            win.blit(WHITE_PIECE, (OFFSET + SQUARE_SIZE * self.col + 12, OFFSET + SQUARE_SIZE * self.row + 12))
         elif self.color == BLUE:
             #pygame.draw.circle(win, WHITE, (self.x, self.y), radius + self.OUTLINE)
-            win.blit(BLUE_PIECE, (OFFSET + SQUARE_SIZE * self.col + 5, OFFSET + SQUARE_SIZE * self.row + 5))
+            win.blit(BLUE_PIECE, (OFFSET + SQUARE_SIZE * self.col + 12, OFFSET + SQUARE_SIZE * self.row + 12))
         #pygame.draw.circle(win, self.color, (self.x, self.y), radius)
         
 

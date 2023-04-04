@@ -1,6 +1,6 @@
 import pygame
 import random
-from .constants import BLACK, ROWS, BLUE, COLS, WHITE, BLUE_WHITE, WOOD, OFFSET, SQUARE_SIZE
+from .constants import BLACK, ROWS, BLUE, COLS, WHITE, BLUE_WHITE, WOOD, OFFSET, SQUARE_SIZE, WOOD_BOARD
 from .piece import Piece
 from .spot import Spot
 
@@ -91,8 +91,10 @@ class Board:
                 self.pieces[row].append(0)
         
     def draw(self, win):
-        pygame.draw.rect(win, WOOD, (OFFSET - 20, OFFSET - 20, SQUARE_SIZE*ROWS + 40, SQUARE_SIZE*ROWS + 40), 0, 5)
-        pygame.draw.rect(win, (92, 64, 51), (OFFSET - 20, OFFSET - 20, SQUARE_SIZE*ROWS + 40, SQUARE_SIZE*ROWS + 40), 5, 5)
+        #pygame.draw.rect(win, WOOD, (OFFSET - 20, OFFSET - 20, SQUARE_SIZE*ROWS + 40, SQUARE_SIZE*ROWS + 40), 0, 5)
+        win.blit(WOOD_BOARD, (OFFSET - 20, OFFSET - 20))
+        pygame.draw.rect(win, (92, 64, 51), (OFFSET - 20, OFFSET - 20, SQUARE_SIZE*ROWS + 40, SQUARE_SIZE*ROWS + 40), 3, 5)
+        #pygame.draw.rect(win, (92, 64, 51), (OFFSET - 2, OFFSET - 2, SQUARE_SIZE*ROWS + 4, SQUARE_SIZE*ROWS + 4), 5, 5)
         self.draw_squares(win)
         for row in range(ROWS):
             for col in range(COLS):
