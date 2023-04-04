@@ -232,10 +232,10 @@ class Game:
                 winner = "PLAYER 1"
             else:
                 winner = "PLAYER 2"
-            pygame.draw.rect(self.win, (10, 10, 10), (50, OFFSET + 50, WIDTH - 100, 100), 0)
+            pygame.draw.rect(self.win, (10, 10, 10), (50, (WIDTH // 2) - 50, WIDTH - 100, 100), 0)
             text = self.font_mm.render(f"{winner} WON", True, BTN_HOVER)
             text_rect = text.get_rect()
-            text_rect.center = (50 + (WIDTH-100) // 2, OFFSET + 100)
+            text_rect.center = (50 + (WIDTH-100) // 2, WIDTH // 2)
             self.win.blit(text, text_rect)
             pygame.display.update()
             pygame.time.wait(2000)
