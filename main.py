@@ -51,7 +51,7 @@ def main():
             elif game.turn == game.ai2_color:
                 # pygame.time.wait(1000)
                 if game.ai2_diff == 0:
-                    new_board = main1(game.board, game, game.p2_color, game.p2_color) #easy mode
+                    new_board = main1(game.board, game, game.p2_color, game.p1_color) #easy mode
                 elif game.ai2_diff == 1:
                     eval, new_board = minimax(game.board, 2, True, game.p2_color, game.p1_color, game)  #medium mode
                 elif game.ai2_diff == 2:

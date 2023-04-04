@@ -121,91 +121,90 @@ class MonteCarloTreeSearchNode():
         self.children = []
         self._number_of_visits = 0
         self._results = defaultdict(int)
-        self._results[1] = 0
-        self._results[-1] = 0
-        self._untried_actions = self._untried_actions()
+        self._results[1] = 0.1
+        self._results[-1] = 0.1
+        self._untried_actions = None
+        self._untried_actions = self.untried_actions()
         return
     
-def untried_actions(self):
-    self._untried_actions = get_all_board_moves(self.position, self.color1, self.game)
-    return self._untried_actions    
+    def untried_actions(self):
+        self._untried_actions = get_all_board_moves(self.position, self.color1, self.game)
+        return self._untried_actions    
 
-def q(self):
-    wins = self._results[1]
-    loses = self._results[-1]
-    return wins - loses
+    def q(self):
+        wins = self._results[1]
+        loses = self._results[-1]
+        return wins - loses
 
-def n(self):
-    return self._number_of_visits
+    def n(self):
+        return self._number_of_visits
 
-def expand(self):
-	
-    action = self._untried_actions.pop()
-    next_state = action
-    child_node = MonteCarloTreeSearchNode(next_state, game=self,color1= self, color2=self, parent=self, parent_action=action)
-
-    self.children.append(child_node)
-    return child_node 
-
-def is_terminal_node(self):
-    return self.position.winner()
-
-def rollout(self):
-    current_rollout_state = self.position
+    def expand(self):
     
-    while not current_rollout_state.winner():
-        
-        possible_moves = get_all_board_moves(current_rollout_state, self.color1, self.game)
-        
-        action = self.rollout_policy(possible_moves)
-        current_rollout_state = action
-    if current_rollout_state.winner() == self.color1:
-        return 1
-    elif current_rollout_state.winner() == self.color2:
-        return -1
-    else:
-        return 0    
+        action = self._untried_actions.pop()
+        next_state = action
+        child_node = MonteCarloTreeSearchNode(next_state, self.game, self.color1, self.color2, self, action)
 
-def backpropagate(self, result):
-    self._number_of_visits += 1.
-    self._results[result] += 1.
-    if self.parent:
-        self.parent.backpropagate(result)
+        self.children.append(child_node)
+        return child_node 
 
-def is_fully_expanded(self):
-    return len(self._untried_actions) == 0
+    def is_terminal_node(self):
+        return self.position.winner()
 
-def best_child(self, c_param=0.1):
-    
-    choices_weights = [(c.q() / c.n()) + c_param * np.sqrt((2 * np.log(self.n()) / c.n())) for c in self.children]
-    return self.children[np.argmax(choices_weights)]
+    def rollout(self):
+        current_rollout_state = self.position
+        while not current_rollout_state.winner():    
 
-def rollout_policy(self, possible_moves):
-    
-    return possible_moves[np.random.randint(len(possible_moves))]
+            possible_moves = get_all_board_moves(current_rollout_state, self.color1, self.game)
+            current_rollout_state = self.rollout_policy(possible_moves)
 
-def _tree_policy(self):
-
-    current_node = self
-    while not current_node.is_terminal_node():
-        
-        if not current_node.is_fully_expanded():
-            return current_node.expand()
+        if current_rollout_state.winner() == self.color1:
+            return 1
+        elif current_rollout_state.winner() == self.color2:
+            return -1
         else:
-            current_node = current_node.best_child()
-    return current_node
+            return 0    
 
-def best_action(self):
-    simulation_no = 100
-	
-	
-    for i in range(simulation_no):
-		
-        v = self._tree_policy()
-        reward = v.rollout()
-        v.backpropagate(reward)
-	
-    return self.best_child(c_param=0.)
+    def backpropagate(self, result):
+        self._number_of_visits += 1.
+        self._results[result] += 1.
+        if self.parent:
+            self.parent.backpropagate(result)
+
+    def is_fully_expanded(self):
+        return len(self._untried_actions) == 0
+
+    def best_child(self, c_param=0.1):
+
+        choices_weights = [(c.q() / c.n()) + c_param * np.sqrt((2 * np.log(self.n()) / c.n())) for c in self.children]
+        return self.children[np.argmax(choices_weights)]
+
+    def rollout_policy(self, possible_moves):
+
+        return random.choice(possible_moves)
+
+    def _tree_policy(self):
+
+        current_node = self
+        while not current_node.is_terminal_node():
+
+            if not current_node.is_fully_expanded():
+                return current_node.expand()
+            else:
+                current_node = current_node.best_child()
+        return current_node
+
+    def best_action(self):
+        simulation_no = 100
+    
+    
+        for i in range(simulation_no):
+        
+            v = self._tree_policy()
+            reward = v.rollout()
+            self.backpropagate(reward)
+    
+        return self.best_child(c_param=0.)
 
 def main1(position, game, color1, color2):
     root = MonteCarloTreeSearchNode(position, game, color1, color2)
