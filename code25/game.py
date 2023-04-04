@@ -22,7 +22,7 @@ class Game:
         self.btn_font = pygame.font.SysFont("arial", 20, bold=True)
         self.main_menu_items = [
                 {"text": "Play", "position": (WIDTH // 2, 400)},
-                {"text": "Info", "position": (WIDTH // 2, 500)},
+                {"text": "Settings", "position": (WIDTH // 2, 500)},
                 {"text": "Quit", "position": (WIDTH // 2, 600)}
             ]
         self.player_menu_opts = [
@@ -38,6 +38,41 @@ class Game:
             pygame.draw.rect(self.win, BTN, box, 0, 3)
             esc_text = self.btn_font.render("[ESC] Back", True, WHITE)
             self.win.blit(esc_text, (10, 10))
+
+            text = self.font.render("Game Summary:", True, BTN_HOVER)
+            self.win.blit(text, (40,80))
+            text = self.btn_font.render("Each player has 5 pieces of his/her respective color. The main", True, BTN)
+            self.win.blit(text, (70,120))
+            text = self.btn_font.render("objective of the game is to move one's pieces to the opposite side", True, BTN)
+            self.win.blit(text, (50,140))
+            text = self.btn_font.render("of the board, but pieces can also be captured (when a piece arrives", True, BTN)
+            self.win.blit(text, (50,160))
+            text = self.btn_font.render("the opposite side, it is called a goal piece, and it can't be moved", True, BTN)
+            self.win.blit(text, (50,180))
+            text = self.btn_font.render("or captured anymore). A piece is captured when a player moves one of", True, BTN)
+            self.win.blit(text, (50,200))
+            text = self.btn_font.render("his/her pieces to the same tile of an opponents piece.", True, BTN)
+            self.win.blit(text, (50,220))
+            text = self.btn_font.render("The game ends when all available pieces of a player are goal or when", True, BTN)
+            self.win.blit(text, (70,240))
+            text = self.btn_font.render("all his/her not goal pieces are captured. The player who manages to get", True, BTN)
+            self.win.blit(text, (50,260))
+            text = self.btn_font.render("all his available pieces to align in the opposite side of the board ", True, BTN)
+            self.win.blit(text, (50,280))
+            text = self.btn_font.render("faster is considered the winner. If there is a tie, the player who has", True, BTN)
+            self.win.blit(text, (50,300))
+            text = self.btn_font.render("more available (not goal) pieces alive on the board wins.", True, BTN)
+            self.win.blit(text, (50,320))
+
+            text = self.font.render("Bot Info:", True, BTN_HOVER)
+            self.win.blit(text, (40,400))
+            text = self.btn_font.render("CPU I    -->  Easy Mode", True, BTN)
+            self.win.blit(text, (70,440))
+            text = self.btn_font.render("CPU II   -->  Medium Mode", True, BTN)
+            self.win.blit(text, (70,460))
+            text = self.btn_font.render("CPU III  -->  Hard Mode", True, BTN)
+            self.win.blit(text, (70,480))
+            
 
         if self.game_state == State.PLAY_MENU_STATE:
             self.win.fill(BACKGROUND)
