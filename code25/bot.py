@@ -6,15 +6,18 @@ from .constants import SQUARE_SIZE, OFFSET, GREY
 
 DELAY = 0
 
-def minimax(position, depth, max_player, color1, color2, game, alpha=float('-inf'), beta=float('inf')):     #position -> board_state
-    if depth == 0 or position.winner() != None:
+def minimax(position, depth, max_player, color1, color2, game, h, alpha=float('-inf'), beta=float('inf')):     #position -> board_state
+    if (depth == 0 or position.winner() != None) and h==0:
+        return position.h3(color1), position
+
+    elif (depth == 0 or position.winner() != None) and h==1:
         return position.h2(color1), position
     
     if max_player:
         maxEval = float('-inf')
         best_move = None
         for move in get_all_board_moves(position, color1, game):
-            evaluation = minimax(move, depth-1, False, color1, color2, game, alpha, beta)[0]
+            evaluation = minimax(move, depth-1, False, color1, color2, game, h, alpha, beta)[0]
             maxEval = max(maxEval, evaluation)
             alpha = max(alpha, evaluation)
             if beta <= alpha: break
@@ -26,7 +29,7 @@ def minimax(position, depth, max_player, color1, color2, game, alpha=float('-inf
         minEval = float('inf')
         best_move = None
         for move in get_all_board_moves(position, color2, game):
-            evaluation = minimax(move, depth-1, True, color1, color2, game, alpha, beta)[0]
+            evaluation = minimax(move, depth-1, True, color1, color2, game, h, alpha, beta)[0]
             minEval = min(minEval, evaluation)
             beta = min(beta, evaluation)
             if beta <= alpha: break

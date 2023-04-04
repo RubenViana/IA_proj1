@@ -54,11 +54,11 @@ class Board:
         if color == BLUE and self.white_goal > self.blue_goal:
             return (self.blue_goal)*6 + (self.blue_left - self.white_left)*2
         elif color == BLUE and self.blue_goal >= self.white_goal:
-            return (self.blue_goal)*2 + (self.blue_left - self.white_left)*10
+            return (self.blue_goal)*4 + (self.blue_left - self.white_left)*10
         elif color == WHITE and self.blue_goal > self.white_goal:
             return (self.white_goal)*6 + (self.white_left - self.blue_left)*2
         elif color == WHITE and self.white_goal >= self.blue_goal:
-            return (self.white_goal)*2 + (self.white_left - self.blue_left)*10
+            return (self.white_goal)*4 + (self.white_left - self.blue_left)*10
 
     def h2(self, color):
         dist = 0.01
