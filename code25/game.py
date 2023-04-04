@@ -22,7 +22,7 @@ class Game:
         self.btn_font = pygame.font.SysFont("arial", 20, bold=True)
         self.main_menu_items = [
                 {"text": "Play", "position": (WIDTH // 2, 400)},
-                {"text": "Settings", "position": (WIDTH // 2, 500)},
+                {"text": "Info", "position": (WIDTH // 2, 500)},
                 {"text": "Quit", "position": (WIDTH // 2, 600)}
             ]
         self.player_menu_opts = [
