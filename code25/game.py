@@ -11,7 +11,7 @@ class State(Enum):
     PLAY_MENU_STATE = 3
     SETTINGS_MENU_STATE = 4
 
-
+# Creating the Game class that will contain the game's logic
 class Game:
     def __init__(self, win):
         self._init()
@@ -30,10 +30,13 @@ class Game:
                 {"text": "Player 2", "type": ["Human", "CPU I", "CPU II", "CPU III"], "pos1": (WIDTH // 2, 480), "pos2": (WIDTH // 2, 525)},
                 {"text": "START", "pos1": (WIDTH // 2, 670)}
             ]
-    
+    '''
+    update screen 
+    '''
     def update(self):
         if self.game_state == State.SETTINGS_MENU_STATE:
             self.win.fill(BACKGROUND)
+            # Draw the 'Back' button
             box = pygame.Rect((5, 3, 120, 35))
             pygame.draw.rect(self.win, BTN, box, 0, 3)
             esc_text = self.btn_font.render("[ESC] Back", True, WHITE)
@@ -76,6 +79,7 @@ class Game:
 
         if self.game_state == State.PLAY_MENU_STATE:
             self.win.fill(BACKGROUND)
+            # Draw the 'Back' button
             box = pygame.Rect((5, 3, 120, 35))
             pygame.draw.rect(self.win, BTN, box, 0, 3)
             esc_text = self.btn_font.render("[ESC] Back", True, WHITE)
