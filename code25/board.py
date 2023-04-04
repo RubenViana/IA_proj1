@@ -51,10 +51,15 @@ class Board:
         return abs(row - line)
     
     def h1(self, color):
-        if color == BLUE:
-            return (self.blue_goal - self.white_goal)*4 + (self.blue_left - self.white_left)
-        return (self.white_goal - self.blue_goal)*4 + (self.white_left - self.blue_left)
-    
+        if color == BLUE and self.white_goal > self.blue_goal:
+            return (self.blue_goal)*6 + (self.blue_left - self.white_left)*2
+        elif color == BLUE and self.blue_goal >= self.white_goal:
+            return (self.blue_goal)*2 + (self.blue_left - self.white_left)*10
+        elif color == WHITE and self.blue_goal > self.white_goal:
+            return (self.white_goal)*6 + (self.white_left - self.blue_left)*2
+        elif color == WHITE and self.white_goal >= self.blue_goal:
+            return (self.white_goal)*2 + (self.white_left - self.blue_left)*10
+
     def h2(self, color):
         dist = 0.01
         if color == self.p1_color:
@@ -64,10 +69,24 @@ class Board:
         pieces = self.get_all_pieces(color)
         for piece in pieces:
             row = piece.row
-            dist += self.goal_distance(row, line)   
+            dist += self.goal_distance(row, line)
 
         #print("dist:" + str(dist))
-        return 2/dist + self.h1(color)
+        return 0.5/dist + float(self.h1(color))
+
+    def h3(self, color):
+        dist = 0.01
+        if color == self.p1_color:
+            line = ROWS - 1
+        else:
+            line = 0
+        pieces = self.get_all_pieces(color)
+        for piece in pieces:
+            row = piece.row
+            dist += self.goal_distance(row, line)
+
+        #print("dist:" + str(dist))
+        return 0.5/dist
 
     def create_board(self):
         for row in range(ROWS):

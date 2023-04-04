@@ -1,6 +1,7 @@
 from copy import deepcopy
 import pygame
 import random
+import math
 from .constants import SQUARE_SIZE, OFFSET, GREY
 
 DELAY = 0
@@ -42,7 +43,7 @@ def simulate_move(piece, move, board, rp):
     return board
 
 
-def get_all_board_moves(board, color, game):
+def get_all_board_moves(board, color, game=None):
     board_moves = []
     for piece in board.get_all_pieces(color):
         valid_moves = board.get_valid_moves(piece, color)
@@ -74,3 +75,74 @@ def randomPlay(board, color, game):
     board_states = get_all_board_moves(board, color, game)
     random_move = random.choice(board_states)
     return random_move
+
+
+# Monte Carlo
+
+class Node:
+    def __init__(self, state, turn, parent=None):
+        self.state = state
+        self.parent = parent
+        self.children = []
+        self.visits = 0
+        self.score = 0
+        self.turn = turn
+
+    def add_child(self, child_state, turn):
+        child = Node(child_state, turn, parent=self)
+        self.children.append(child)
+        return child
+
+    def update(self, score):
+        self.visits += 1
+        self.score += score
+
+    def fully_expanded(self):
+        return len(self.children) == len(get_all_board_moves(self.state, self.turn))
+
+    def best_child(self, c=1.4):
+        choices_weights = [(c.score / c.visits) + (c.visits**0.5) * math.sqrt(math.log(self.visits) / c.visits) for c in self.children]
+        return self.children[choices_weights.index(max(choices_weights))]
+
+class MCTS:
+    def __init__(self, board, color1, color2, time_budget=1000):
+        self.time_budget = time_budget
+        self.color1 = color1
+        self.color2 = color2
+        self.board = board
+
+    def search(self):
+        root = Node(self.board, self.color1)
+
+        for i in range(self.time_budget):
+            node = root
+
+            while not node.state.winner() != None and node.fully_expanded():
+                node = node.best_child()
+
+            if not node.state.winner() != None:
+                node = node.add_child(random.choice(get_all_board_moves(node.state, self.color1)), self.color1)
+
+            score = self.simulate(node.state)
+            while node is not None:
+                node.update(score)
+                node = node.parent
+
+        return root.best_child(c=0)
+
+    def simulate(self, state):
+
+        while not state.winner() != None:
+            move = random.choice(get_all_board_moves(state, self.color1))
+            state = move
+
+        if state.winner() == self.color1:
+            return 1
+        elif state.winner() == self.color2:
+            return 0
+        else:
+            return 0.5
+        
+def monteCarlo(board, color1, color2):
+    mc = MCTS(board, color1, color2, 20)
+    return mc.search().state
