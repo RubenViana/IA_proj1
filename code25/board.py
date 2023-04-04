@@ -51,13 +51,18 @@ class Board:
         return abs(row - line)
     
     def h1(self, color):
-        if color == BLUE and self.white_goal > self.blue_goal:
+        if color == BLUE and self.blue_goal == self.white_goal and self.blue_goal == 0:
+            return (self.blue_goal)*10 + (self.blue_left - self.white_left)*4
+        elif color == BLUE and self.white_goal >= self.blue_goal:
             return (self.blue_goal)*6 + (self.blue_left - self.white_left)*2
-        elif color == BLUE and self.blue_goal >= self.white_goal:
+        elif color == BLUE and self.blue_goal > self.white_goal:
             return (self.blue_goal)*4 + (self.blue_left - self.white_left)*10
-        elif color == WHITE and self.blue_goal > self.white_goal:
+        
+        if color == WHITE and self.white_goal == self.blue_goal and self.white_goal == 0:
+            return (self.white_goal)*10 + (self.white_left - self.blue_left)*4
+        elif color == WHITE and self.blue_goal >= self.white_goal:
             return (self.white_goal)*6 + (self.white_left - self.blue_left)*2
-        elif color == WHITE and self.white_goal >= self.blue_goal:
+        elif color == WHITE and self.white_goal > self.blue_goal:
             return (self.white_goal)*4 + (self.white_left - self.blue_left)*10
 
     def h2(self, color):
