@@ -22,7 +22,7 @@ class Game:
         self.btn_font = pygame.font.SysFont("arial", 20, bold=True)
         self.main_menu_items = [
                 {"text": "Play", "position": (WIDTH // 2, 400)},
-                {"text": "Settings", "position": (WIDTH // 2, 500)},
+                {"text": "Info", "position": (WIDTH // 2, 500)},
                 {"text": "Quit", "position": (WIDTH // 2, 600)}
             ]
         self.player_menu_opts = [
@@ -181,7 +181,7 @@ class Game:
         if self.selected_player2_menu_type != 0:
             self.ai2_diff = self.selected_player2_menu_type - 1
             n_rotations = random.randrange(0,4)
-            n_side = random.randrange(0,1)
+            n_side = random.randrange(0,2)
             for r in range(n_rotations):
                 self.board.rotate_board()
             if n_side == 0:
