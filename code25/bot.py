@@ -121,9 +121,8 @@ class MonteCarloTreeSearchNode():
         self.children = []
         self._number_of_visits = 0
         self._results = defaultdict(int)
-        self._results[1] = 0.1
-        self._results[-1] = 0.1
-        self._untried_actions = None
+        self._results[1] = 0        
+        self._results[-1] = 0
         self._untried_actions = self.untried_actions()
         return
     
@@ -137,24 +136,37 @@ class MonteCarloTreeSearchNode():
         return wins - loses
 
     def n(self):
-        return self._number_of_visits
+        if self._number_of_visits == 0 :
+            return 1
+        else:
+            return self._number_of_visits
 
     def expand(self):
-    
+        
+        # print(self._untried_actions[0].get_all_pieces(self.color1))
+        # print(self._untried_actions[1].get_all_pieces(self.color1))
+        # print(self._untried_actions[2].get_all_pieces(self.color1))
+        # print(self._untried_actions[3].get_all_pieces(self.color1))
+        # print(self._untried_actions[4].get_all_pieces(self.color1))
         action = self._untried_actions.pop()
         next_state = action
+        print(vars(self))
+        print('\n')
+        print('\n')
+        print('\n')
         child_node = MonteCarloTreeSearchNode(next_state, self.game, self.color1, self.color2, self, action)
 
         self.children.append(child_node)
         return child_node 
 
     def is_terminal_node(self):
-        return self.position.winner()
+        if self.position.winner() != None:
+            return True
+        return False
 
     def rollout(self):
         current_rollout_state = self.position
-        while not current_rollout_state.winner():    
-
+        while not current_rollout_state.winner():
             possible_moves = get_all_board_moves(current_rollout_state, self.color1, self.game)
             current_rollout_state = self.rollout_policy(possible_moves)
 
@@ -195,8 +207,7 @@ class MonteCarloTreeSearchNode():
         return current_node
 
     def best_action(self):
-        simulation_no = 100
-    
+        simulation_no = 5
     
         for i in range(simulation_no):
         
@@ -204,12 +215,12 @@ class MonteCarloTreeSearchNode():
             reward = v.rollout()
             self.backpropagate(reward)
     
-        return self.best_child(c_param=0.)
+        return self.best_child()
 
 def main1(position, game, color1, color2):
     root = MonteCarloTreeSearchNode(position, game, color1, color2)
     selected_node = root.best_action()
-    return selected_node
+    return selected_node.position
 
 
 
